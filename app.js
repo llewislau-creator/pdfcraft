@@ -52,7 +52,7 @@ const translations={
     compressDownload:'Compress & Download',cancel:'Cancel',signatureTitle:'Draw your signature',
     signatureNote:'Draw your signature, then drag it into position on the page.',clear:'Clear',addSignature:'Add signature',
     watermarkTitle:'Add text watermark',watermarkText:'Watermark text',fontSize:'Font size',opacity:'Opacity',angle:'Angle',
-    watermarkColor:'Color',repeatWatermark:'Repeat across page',applyTo:'Apply to',currentPage:'Current page',
+    watermarkColor:'Color',center:'Center',topLeft:'Top left',bottomLeft:'Bottom left',repeatWatermark:'Repeat across page',applyTo:'Apply to',currentPage:'Current page',
     selectedPages:'Selected pages',allPages:'All pages',applyWatermark:'Apply watermark',
     splitTitle:'Extract selected pages',useSelectedPages:'Use selected pages',enterRange:'Enter page range',
     pageRange:'Page range',oddPages:'Odd pages',evenPages:'Even pages',extractDownload:'Extract & Download',
@@ -107,7 +107,7 @@ const translations={
     compressDownload:'壓縮並下載',cancel:'取消',signatureTitle:'繪製你的簽名',
     signatureNote:'手寫簽名後，可直接在頁面上拖曳到需要的位置。',clear:'清除',addSignature:'加入簽名',
     watermarkTitle:'加入文字水印',watermarkText:'水印文字',fontSize:'字體大小',opacity:'透明度',angle:'旋轉角度',
-    watermarkColor:'顏色',repeatWatermark:'整頁重複水印',applyTo:'套用到',currentPage:'目前頁面',
+    watermarkColor:'顏色',center:'中央',topLeft:'左上角',bottomLeft:'左下角',repeatWatermark:'整頁重複水印',applyTo:'套用到',currentPage:'目前頁面',
     selectedPages:'已選頁面',allPages:'全部頁面',applyWatermark:'套用水印',
     splitTitle:'擷取指定頁面',useSelectedPages:'使用已選頁面',enterRange:'輸入頁碼範圍',
     pageRange:'頁碼範圍',oddPages:'奇數頁',evenPages:'偶數頁',extractDownload:'擷取並下載',
@@ -135,8 +135,8 @@ const translations={
   }
 };
 
-let currentLang='en';
-try{currentLang=localStorage.getItem('pdfcraft-lang')||'en';}catch(e){}
+let currentLang=(navigator.language||'').toLowerCase().startsWith('zh')?'zh':'en';
+try{currentLang=localStorage.getItem('pdfcraft-lang')||currentLang;}catch(e){}
 
 let sourceDocs=[];
 let imageSources=[];
@@ -441,7 +441,14 @@ function drawWatermarkMark(ctx,mark,w,h){
       }
     }
   }else{
-    ctx.translate(w/2,h/2);ctx.rotate((mark.angle||0)*Math.PI/180);ctx.fillText(mark.text,0,0);
+    const margin=Math.max(font*1.3,w*.035);
+    let x=w/2,y=h/2,align='center';
+    if(mark.position==='top-left'){x=margin;y=margin;align='left';}
+    if(mark.position==='top-right'){x=w-margin;y=margin;align='right';}
+    if(mark.position==='bottom-left'){x=margin;y=h-margin;align='left';}
+    if(mark.position==='bottom-right'){x=w-margin;y=h-margin;align='right';}
+    ctx.textAlign=align;
+    ctx.translate(x,y);ctx.rotate((mark.angle||0)*Math.PI/180);ctx.fillText(mark.text,0,0);
   }
   ctx.restore();
 }
@@ -681,6 +688,7 @@ function goPage(d){const to=selected+d;if(to<0||to>=pages.length)return;selected
 function bulkExport(){exportIndices(getSelectedIndices(),'pdfcraft-selected-pages.pdf',t('selectedDownloaded'));}
 
 function openTools(){
+  if(window.innerWidth<=900)closeMobileDrawer();
   const d=el('toolsDrawer');if(d){d.classList.add('open');d.setAttribute('aria-hidden','false');}
   if(window.innerWidth<=900)el('mobileDrawerBackdrop')?.classList.add('open');
 }
@@ -688,8 +696,8 @@ function closeTools(){
   const d=el('toolsDrawer');if(d){d.classList.remove('open');d.setAttribute('aria-hidden','true');}
   if(!el('mobilePagesDrawer')?.classList.contains('open'))el('mobileDrawerBackdrop')?.classList.remove('open');
 }
-function openMobileDrawer(){el('mobilePagesDrawer')?.classList.add('open');el('mobileDrawerBackdrop')?.classList.add('open');}
-function closeMobileDrawer(){el('mobilePagesDrawer')?.classList.remove('open');el('mobileDrawerBackdrop')?.classList.remove('open');}
+function openMobileDrawer(){closeTools();el('mobilePagesDrawer')?.classList.add('open');el('mobileDrawerBackdrop')?.classList.add('open');}
+function closeMobileDrawer(){el('mobilePagesDrawer')?.classList.remove('open');if(!el('toolsDrawer')?.classList.contains('open'))el('mobileDrawerBackdrop')?.classList.remove('open');}
 
 function openModal(id){
   closeTools();const back=el('modalBackdrop'),m=el(id);if(back){back.hidden=false;back.classList.add('open');}if(m){m.hidden=false;m.classList.add('open');}
@@ -731,7 +739,7 @@ async function addSignature(){
 }
 
 function readWatermark(){
-  return {text:(el('watermarkText')?.value||'').trim(),size:Number(el('watermarkSize')?.value||42),opacity:Number(el('watermarkOpacity')?.value||25)/100,angle:Number(el('watermarkAngle')?.value||0),color:el('watermarkColor')?.value||'#555555',tile:!!el('watermarkTile')?.checked};
+  return {text:(el('watermarkText')?.value||'').trim(),size:Number(el('watermarkSize')?.value||42),opacity:Number(el('watermarkOpacity')?.value||25)/100,angle:Number(el('watermarkAngle')?.value||0),color:el('watermarkColor')?.value||'#555555',position:el('watermarkPosition')?.value||'center',tile:!!el('watermarkTile')?.checked};
 }
 function updateWatermarkPreview(){
   previewWatermark=readWatermark();previewWatermarkPageId=pages[selected]?.id||null;
@@ -852,7 +860,7 @@ function setupQuickSelects(){
   });
 }
 function setupWatermarkControls(){
-  ['watermarkText','watermarkSize','watermarkOpacity','watermarkAngle','watermarkColor','watermarkTile'].forEach(id=>el(id)?.addEventListener('input',updateWatermarkPreview));
+  ['watermarkText','watermarkSize','watermarkOpacity','watermarkAngle','watermarkColor','watermarkPosition','watermarkTile'].forEach(id=>el(id)?.addEventListener('input',updateWatermarkPreview));
 }
 function setupModalClosers(){qa('[data-close-modal]').forEach(n=>n.onclick=closeModals);el('modalBackdrop').onclick=closeModals;}
 
@@ -873,7 +881,7 @@ on('runCompressBtn',compressPdf);on('clearSignatureBtn',clearSignaturePad);on('a
 on('runSplitBtn',runSplit);on('applyImageSettingsBtn',applyImageSettings);on('applyPageNumbersBtn',applyPageNumbers);
 on('cancelProgressBtn',()=>{abortRequested=true;});
 on('stayBtn',()=>{pendingHome=false;closeModals();});on('leaveBtn',()=>{dirty=false;goHomeForce();});
-on('langBtn',async()=>{currentLang=currentLang==='en'?'zh':'en';try{localStorage.setItem('pdfcraft-lang',currentLang);}catch(e){}applyLanguage();if(pages.length)await renderThumbLists();});
+on('langBtn',async()=>{currentLang=currentLang==='en'?'zh':'en';try{localStorage.setItem('pdfcraft-lang',currentLang);}catch(e){}applyLanguage();if(pages.length)await rebuild();});
 
 if(fileInput)fileInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';};
 if(multiInput)multiInput.onchange=async e=>{await openPdfFiles(e.target.files,pages.length===0);e.target.value='';};
