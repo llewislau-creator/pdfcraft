@@ -17,15 +17,15 @@
         </div>
         <div class="brand-copy">
           <div class="brand">PDFCraft</div>
-          <div class="tagline">Beautiful PDF tools, private by default</div>
+          <div class="tagline" data-i18n="tagline">Beautiful PDF tools, private by default</div>
         </div>
       </div>
 
-      <nav class="top-actions" aria-label="Primary actions">
-        <button class="btn ghost" id="openBtn">Open PDF</button>
-        <button class="btn soft" id="mergeBtn">Merge PDFs</button>
-        <button class="btn soft" id="imagesBtn">Images to PDF</button>
-        <button class="btn primary" id="exportBtn" disabled>Download PDF</button>
+      <nav class="top-actions" aria-label="Primary actions"><button class="btn ghost" id="langBtn" type="button">中文</button>
+        <button class="btn ghost" id="openBtn" data-i18n="openPdf">Open PDF</button>
+        <button class="btn soft" id="mergeBtn" data-i18n="mergePdfs">Merge PDFs</button>
+        <button class="btn soft" id="imagesBtn" data-i18n="imagesToPdf">Images to PDF</button>
+        <button class="btn primary" id="exportBtn" disabled data-i18n="downloadPdf">Download PDF</button>
       </nav>
     </header>
 
@@ -33,9 +33,9 @@
       <aside class="sidebar">
         <div class="sidebar-head">
           <div>
-            <span class="eyebrow">DOCUMENT</span>
+            <span class="eyebrow" data-i18n="document">DOCUMENT</span>
             <div class="sidebar-title-row">
-              <strong>Pages</strong>
+              <strong data-i18n="pages">Pages</strong>
               <span class="count-pill" id="pageCount">0</span>
             </div>
           </div>
@@ -46,8 +46,8 @@
         <div class="sidebar-tip">
           <div class="tip-icon">✦</div>
           <div>
-            <strong>Tip</strong>
-            <p>Drag page thumbnails to reorder them.</p>
+            <strong data-i18n="tip">Tip</strong>
+            <p data-i18n="tipText">Drag page thumbnails to reorder them.</p>
           </div>
         </div>
       </aside>
@@ -55,100 +55,100 @@
       <section class="canvas-area">
         <div class="toolbar">
           <div class="toolbar-group">
-            <button class="tool-btn" id="rotateLeft" disabled><span>↶</span> Rotate left</button>
-            <button class="tool-btn" id="rotateRight" disabled><span>↷</span> Rotate right</button>
-            <button class="tool-btn danger" id="deletePage" disabled><span>⌫</span> Delete</button>
+            <button class="tool-btn" id="rotateLeft" disabled><span>↶</span> <span data-i18n="rotateLeft">Rotate left</span></button>
+            <button class="tool-btn" id="rotateRight" disabled><span>↷</span> <span data-i18n="rotateRight">Rotate right</span></button>
+            <button class="tool-btn danger" id="deletePage" disabled><span>⌫</span> <span data-i18n="delete">Delete</span></button>
           </div>
 
           <span class="divider"></span>
 
           <div class="toolbar-group">
-            <button class="tool-btn" id="moveUp" disabled><span>↑</span> Move up</button>
-            <button class="tool-btn" id="moveDown" disabled><span>↓</span> Move down</button>
+            <button class="tool-btn" id="moveUp" disabled><span>↑</span> <span data-i18n="moveUp">Move up</span></button>
+            <button class="tool-btn" id="moveDown" disabled><span>↓</span> <span data-i18n="moveDown">Move down</span></button>
           </div>
 
           <span class="divider"></span>
 
           <div class="toolbar-group future-group">
-            <button class="tool-btn future" disabled>Sign <small>Soon</small></button>
-            <button class="tool-btn future" disabled>OCR <small>Soon</small></button>
-            <button class="tool-btn future" disabled>Compress <small>Soon</small></button>
-            <button class="tool-btn future ai-tool" disabled>✦ AI <small>Soon</small></button>
+            <button class="tool-btn future" disabled><span data-i18n="sign">Sign</span> <small data-i18n="soon">Soon</small></button>
+            <button class="tool-btn future" disabled><span>OCR</span> <small data-i18n="soon">Soon</small></button>
+            <button class="tool-btn future" disabled><span data-i18n="compress">Compress</span> <small data-i18n="soon">Soon</small></button>
+            <button class="tool-btn future ai-tool" disabled>✦ AI <small data-i18n="soon">Soon</small></button>
           </div>
         </div>
 
         <div id="dropZone" class="drop-zone">
           <div id="emptyState" class="empty-state">
             <section class="hero-card">
-              <div class="hero-badge">100% browser-based · No upload required</div>
+              <div class="hero-badge"><span data-i18n="browserOnly">100% browser-based · No upload required</span></div>
               <div class="hero-visual">
                 <div class="doc-card doc-a"></div>
                 <div class="doc-card doc-b"></div>
                 <div class="hero-icon">PDF</div>
               </div>
-              <h1>Edit PDFs beautifully.<br><span>Right in your browser.</span></h1>
-              <p class="hero-copy">Merge, reorder, rotate and export PDF files — or turn JPG and PNG images into one PDF — while keeping everything on your device.</p>
+              <h1><span data-i18n="hero1">Edit PDFs beautifully.</span><br><span data-i18n="hero2">Right in your browser.</span></h1>
+              <p class="hero-copy"><span data-i18n="heroCopy">Merge, reorder, rotate and export PDF files — or turn JPG and PNG images into one PDF — while keeping everything on your device.</span></p>
 
               <div class="empty-actions">
-                <button class="btn primary hero-primary" id="chooseBtn">Choose a PDF</button>
-                <button class="btn soft hero-secondary" id="chooseMultiBtn">Merge PDFs</button>
-                <button class="btn soft hero-secondary" id="chooseImagesBtn">JPG / PNG to PDF</button>
+                <button class="btn primary hero-primary" id="chooseBtn" data-i18n="choosePdf">Choose a PDF</button>
+                <button class="btn soft hero-secondary" id="chooseMultiBtn" data-i18n="mergePdfs">Merge PDFs</button>
+                <button class="btn soft hero-secondary" id="chooseImagesBtn" data-i18n="jpgPngToPdf">JPG / PNG to PDF</button>
               </div>
 
               <div class="trust-row">
-                <span>✓ No account</span>
-                <span>✓ No uploads</span>
-                <span>✓ Free to start</span>
+                <span><span data-i18n="noAccount">✓ No account</span></span>
+                <span><span data-i18n="noUploads">✓ No uploads</span></span>
+                <span><span data-i18n="freeStart">✓ Free to start</span></span>
               </div>
             </section>
 
             <section class="tool-section">
               <div class="section-heading">
                 <div>
-                  <span class="eyebrow">POPULAR TOOLS</span>
-                  <h2>Everything you need for everyday PDFs</h2>
+                  <span class="eyebrow" data-i18n="popularTools">POPULAR TOOLS</span>
+                  <h2 data-i18n="everything">Everything you need for everyday PDFs</h2>
                 </div>
-                <span class="section-note">Fast, simple, private</span>
+                <span class="section-note" data-i18n="fastPrivate">Fast, simple, private</span>
               </div>
 
               <div class="tool-grid">
                 <button class="tool-card featured" id="toolEditCard" type="button">
                   <div class="tool-card-icon edit">✎</div>
-                  <div><strong>Edit PDF</strong><span>Reorder, rotate & remove pages</span></div>
+                  <div><strong data-i18n="editPdf">Edit PDF</strong><span data-i18n="editPdfDesc">Reorder, rotate & remove pages</span></div>
                 </button>
 
                 <button class="tool-card" id="toolMergeCard" type="button">
                   <div class="tool-card-icon merge">⌘</div>
-                  <div><strong>Merge PDF</strong><span>Combine multiple PDF files</span></div>
+                  <div><strong data-i18n="mergePdf">Merge PDF</strong><span data-i18n="mergePdfDesc">Combine multiple PDF files</span></div>
                 </button>
 
                 <button class="tool-card" id="toolImageCard" type="button">
                   <div class="tool-card-icon sign">▧</div>
-                  <div><strong>Images to PDF</strong><span>Combine JPG & PNG into one PDF</span></div>
+                  <div><strong data-i18n="imagesToPdf">Images to PDF</strong><span data-i18n="imagesToPdfDesc">Combine JPG & PNG into one PDF</span></div>
                 </button>
 
                 <div class="tool-card muted-card">
                   <div class="tool-card-icon split">⇥</div>
-                  <div><strong>Split PDF</strong><span>Extract selected pages</span></div>
-                  <span class="soon-badge">Soon</span>
+                  <div><strong data-i18n="splitPdf">Split PDF</strong><span data-i18n="splitPdfDesc">Extract selected pages</span></div>
+                  <span class="soon-badge" data-i18n="soon">Soon</span>
                 </div>
 
                 <div class="tool-card muted-card">
                   <div class="tool-card-icon compress">⇣</div>
-                  <div><strong>Compress PDF</strong><span>Reduce document size</span></div>
-                  <span class="soon-badge">Soon</span>
+                  <div><strong data-i18n="compressPdf">Compress PDF</strong><span data-i18n="compressPdfDesc">Reduce document size</span></div>
+                  <span class="soon-badge" data-i18n="soon">Soon</span>
                 </div>
 
                 <div class="tool-card muted-card">
                   <div class="tool-card-icon sign">✓</div>
-                  <div><strong>Sign PDF</strong><span>Add a secure signature</span></div>
-                  <span class="soon-badge">Soon</span>
+                  <div><strong data-i18n="signPdf">Sign PDF</strong><span data-i18n="signPdfDesc">Add a secure signature</span></div>
+                  <span class="soon-badge" data-i18n="soon">Soon</span>
                 </div>
 
                 <div class="tool-card muted-card">
                   <div class="tool-card-icon ai">✦</div>
-                  <div><strong>AI Assistant</strong><span>Ask questions about your PDF</span></div>
-                  <span class="soon-badge">Soon</span>
+                  <div><strong data-i18n="aiAssistant">AI Assistant</strong><span data-i18n="aiAssistantDesc">Ask questions about your PDF</span></div>
+                  <span class="soon-badge" data-i18n="soon">Soon</span>
                 </div>
               </div>
             </section>
@@ -157,7 +157,7 @@
           <div id="viewerWrap" class="viewer-wrap hidden">
             <div class="viewer-topline">
               <div id="pageLabel" class="page-label">Page 1</div>
-              <div class="viewer-hint">Drag thumbnails to reorder pages</div>
+              <div class="viewer-hint" data-i18n="viewerHint">Drag thumbnails to reorder pages</div>
             </div>
 
             <div class="paper-stage">
@@ -170,7 +170,7 @@
 
     <footer class="statusbar">
       <div class="status-left"><span class="status-dot"></span><span id="status">Ready</span></div>
-      <div class="status-right">Private processing · Your files stay on this device</div>
+      <div class="status-right" data-i18n="privateProcessing">Private processing · Your files stay on this device</div>
     </footer>
   </div>
 
