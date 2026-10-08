@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDFCraft — Private PDF Editor</title>
+  <meta name="description" content="A private, browser-based PDF editor for merge, rotate, delete, reorder and export." />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="logo">P</div>
+        <div><div class="brand">PDFCraft</div><div class="tagline">Private PDF tools in your browser</div></div>
+      </div>
+      <div class="top-actions">
+        <button class="btn secondary" id="openBtn">Open PDF</button>
+        <button class="btn secondary" id="mergeBtn">Merge PDF</button>
+        <button class="btn primary" id="exportBtn" disabled>Download PDF</button>
+      </div>
+    </header>
+    <main class="workspace">
+      <aside class="sidebar">
+        <div class="sidebar-head"><div><strong>Pages</strong><span id="pageCount">0</span></div><button class="icon-btn" id="addBtn">＋</button></div>
+        <div id="thumbs" class="thumbs"></div>
+      </aside>
+      <section class="canvas-area">
+        <div class="toolbar">
+          <button class="tool-btn" id="rotateLeft" disabled>↶ Rotate</button>
+          <button class="tool-btn" id="rotateRight" disabled>↷ Rotate</button>
+          <button class="tool-btn danger" id="deletePage" disabled>Delete</button>
+          <span class="divider"></span>
+          <button class="tool-btn" id="moveUp" disabled>↑ Move</button>
+          <button class="tool-btn" id="moveDown" disabled>↓ Move</button>
+          <span class="divider"></span>
+          <button class="tool-btn future" disabled>Sign <small>Soon</small></button>
+          <button class="tool-btn future" disabled>OCR <small>Soon</small></button>
+          <button class="tool-btn future" disabled>Compress <small>Soon</small></button>
+          <button class="tool-btn future" disabled>AI <small>Soon</small></button>
+        </div>
+        <div id="dropZone" class="drop-zone">
+          <div id="emptyState" class="empty-state">
+            <div class="drop-icon">PDF</div><h1>Edit PDFs privately</h1>
+            <p>Drop one or more PDF files here. Your files stay on your device.</p>
+            <div class="empty-actions"><button class="btn primary" id="chooseBtn">Choose PDF</button><button class="btn secondary" id="chooseMultiBtn">Merge PDFs</button></div>
+            <div class="privacy-note">No upload required · Browser-only processing</div>
+          </div>
+          <div id="viewerWrap" class="viewer-wrap hidden"><div id="pageLabel" class="page-label">Page 1</div><canvas id="pdfCanvas"></canvas></div>
+        </div>
+      </section>
+    </main>
+    <footer class="statusbar"><span id="status">Ready</span><span>PDFCraft MVP · Local processing</span></footer>
+  </div>
+  <input id="fileInput" type="file" accept="application/pdf,.pdf" hidden />
+  <input id="multiInput" type="file" accept="application/pdf,.pdf" multiple hidden />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body></html>
