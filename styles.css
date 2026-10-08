@@ -329,3 +329,63 @@ button.tool-card:hover{transform:translateY(-2px);border-color:#ddd4fb;box-shado
   .toolbar-divider{height:26px;align-self:center}
   .mobile-thumbs{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Functional More Tools */
+button.mini-tool{font:inherit;background:#fff;cursor:pointer}
+.mini-tool.functional{border-color:#e3dcff;color:#51436f;transition:.16s}
+.mini-tool.functional:hover{background:#f8f5ff;border-color:#d6c8ff;transform:translateY(-1px)}
+.mini-tool b{font-size:7px;font-weight:850;text-transform:uppercase;color:#2f7d55;background:#eaf7ef;padding:2px 5px;border-radius:999px}
+
+/* Modal system */
+.modal-backdrop{
+  position:fixed;inset:0;z-index:120;background:rgba(20,20,28,.34);backdrop-filter:blur(5px);
+  opacity:0;pointer-events:none;transition:.18s ease
+}
+.modal-backdrop.open{opacity:1;pointer-events:auto}
+.modal-card{
+  display:block;position:fixed;left:50%;top:50%;z-index:130;width:min(520px,calc(100vw - 28px));
+  transform:translate(-50%,-48%) scale(.98);opacity:0;pointer-events:none;
+  background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 28px 80px rgba(20,20,30,.24);
+  padding:19px;transition:.2s ease
+}
+.modal-card.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.modal-head h3{margin:0;font-size:18px;letter-spacing:-.3px}
+.modal-close{
+  width:32px;height:32px;border:0;border-radius:9px;background:#f3f3f6;color:#555;cursor:pointer;font-size:20px;line-height:1
+}
+.modal-copy{margin:10px 0 15px;color:var(--muted);font-size:11.5px;line-height:1.55}
+.compression-options{display:grid;gap:8px}
+.compression-option{
+  display:flex;align-items:flex-start;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:#fff
+}
+.compression-option:has(input:checked){border-color:#bca9ff;background:#faf8ff;box-shadow:0 0 0 2px rgba(124,58,237,.08)}
+.compression-option input{margin-top:3px;accent-color:var(--purple)}
+.compression-option strong{display:block;font-size:12px}
+.compression-option small{display:block;margin-top:3px;color:var(--muted);font-size:10px;line-height:1.4}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.split-actions{justify-content:space-between;align-items:center}
+.split-actions>div{display:flex;gap:8px}
+
+.signature-pad-wrap{
+  border:1px solid var(--line);border-radius:14px;background:
+  linear-gradient(#fff,#fff) padding-box,
+  repeating-linear-gradient(0deg,#f7f7fa 0,#f7f7fa 1px,transparent 1px,transparent 28px);
+  overflow:hidden
+}
+#signaturePad{display:block;width:100%;height:180px;touch-action:none;cursor:crosshair;background:transparent}
+.signature-options{margin-top:12px}
+.signature-options label{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;color:var(--muted)}
+.signature-options select{
+  min-width:150px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fff;color:#444;font:inherit
+}
+
+@media(max-width:600px){
+  .modal-card{padding:15px;border-radius:17px}
+  .modal-head h3{font-size:16px}
+  #signaturePad{height:150px}
+  .modal-actions{flex-wrap:wrap}
+  .split-actions{align-items:stretch;flex-direction:column}
+  .split-actions>div{display:grid;grid-template-columns:1fr 1fr}
+  .split-actions>.btn{width:100%}
+}
