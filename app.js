@@ -9,6 +9,7 @@ const imageInput=el('imageInput');
 const mixedInput=el('mixedInput');
 const compressInput=el('compressInput');
 const signInput=el('signInput');
+const watermarkInput=el('watermarkInput');
 const thumbs=el('thumbs');
 const mobileThumbs=el('mobileThumbs');
 const canvas=el('pdfCanvas');
@@ -36,6 +37,7 @@ const translations={
     compressLight:'Light',compressLightDesc:'Best quality · modest size reduction',compressBalanced:'Balanced',compressBalancedDesc:'Recommended for most files',compressStrong:'Strong',compressStrongDesc:'Smaller file · lower image quality',
     compressDownload:'Compress & Download',compressing:'Compressing PDF…',compressed:'Compressed PDF downloaded',
     signatureTitle:'Draw your signature',signatureNote:'Draw below, then add the signature to the selected page.',signaturePosition:'Position',bottomRight:'Bottom right',bottomLeft:'Bottom left',center:'Center',clear:'Clear',cancel:'Cancel',addSignature:'Add signature',signatureAdded:'Signature added',drawSignatureFirst:'Draw a signature first.',
+    watermarkPdf:'Watermark PDF',watermarkTitle:'Add text watermark',watermarkNote:'Customize the watermark, then apply it to this page or every page.',watermarkText:'Watermark text',fontSize:'Font size',opacity:'Opacity',angle:'Angle',watermarkPosition:'Position',topLeft:'Top left',topRight:'Top right',applyTo:'Apply to',currentPage:'Current page',allPages:'All pages',applyWatermark:'Apply watermark',watermarkAdded:'Watermark applied',watermarkEmpty:'Enter watermark text.',
     viewerHint:'Drag thumbnails to reorder pages',
     selectedPage:'SELECTED PAGE',properties:'Properties',pageSize:'Page size',rotation:'Rotation',position:'Position',
     privateLocal:'Private by default',privateLocalDesc:'Your files never leave this device.',
@@ -70,6 +72,7 @@ const translations={
     compressLight:'輕度',compressLightDesc:'最佳畫質 · 較少壓縮',compressBalanced:'平衡',compressBalancedDesc:'建議大多數文件使用',compressStrong:'強力',compressStrongDesc:'檔案更小 · 圖片品質較低',
     compressDownload:'壓縮並下載',compressing:'正在壓縮 PDF…',compressed:'壓縮 PDF 已下載',
     signatureTitle:'繪製你的簽名',signatureNote:'在下方手寫簽名，然後加入目前選取的頁面。',signaturePosition:'位置',bottomRight:'右下角',bottomLeft:'左下角',center:'中央',clear:'清除',cancel:'取消',addSignature:'加入簽名',signatureAdded:'簽名已加入',drawSignatureFirst:'請先畫上簽名。',
+    watermarkPdf:'PDF 加水印',watermarkTitle:'加入文字水印',watermarkNote:'設定水印後，可套用到目前頁面或全部頁面。',watermarkText:'水印文字',fontSize:'字體大小',opacity:'透明度',angle:'旋轉角度',watermarkPosition:'位置',topLeft:'左上角',topRight:'右上角',applyTo:'套用到',currentPage:'目前頁面',allPages:'全部頁面',applyWatermark:'套用水印',watermarkAdded:'水印已套用',watermarkEmpty:'請輸入水印文字。',
     viewerHint:'拖曳縮圖即可重新排序頁面',
     selectedPage:'已選頁面',properties:'屬性',pageSize:'頁面尺寸',rotation:'旋轉',position:'位置',
     privateLocal:'預設私密',privateLocalDesc:'你的檔案不會離開這部裝置。',
@@ -170,7 +173,7 @@ async function loadPdf(bytes){
   const docIndex=sourceDocs.length;
   sourceDocs.push({pdfjsDoc,libDoc});
   for(let i=0;i<pdfjsDoc.numPages;i++){
-    pages.push({type:'pdf',docIndex,pageIndex:i,rotation:0,signatures:[],id:uid()});
+    pages.push({type:'pdf',docIndex,pageIndex:i,rotation:0,signatures:[],watermarks:[],id:uid()});
   }
 }
 
@@ -195,7 +198,7 @@ async function loadImageFile(file){
   const height=bitmap.naturalHeight||bitmap.height;
   const imageIndex=imageSources.length;
   imageSources.push({bytes,mime,bitmap,width,height,name:file.name});
-  pages.push({type:'image',imageIndex,rotation:0,signatures:[],id:uid()});
+  pages.push({type:'image',imageIndex,rotation:0,signatures:[],watermarks:[],id:uid()});
 }
 
 function isPdf(file){
@@ -253,6 +256,7 @@ async function renderPdfItem(item){
   if(token!==renderToken)return;
   await page.render({canvasContext:ctx,viewport:vp}).promise;
   await drawSignaturesOnCanvas(ctx,item,vp.width,vp.height);
+  await drawWatermarksOnCanvas(ctx,item,vp.width,vp.height);
 }
 
 async function renderImageItem(item){
@@ -278,6 +282,7 @@ async function renderImageItem(item){
   ctx.drawImage(src.bitmap,-src.width*scale/2,-src.height*scale/2,src.width*scale,src.height*scale);
   ctx.restore();
   await drawSignaturesOnCanvas(ctx,item,cssW,cssH);
+  await drawWatermarksOnCanvas(ctx,item,cssW,cssH);
 }
 
 
@@ -326,13 +331,106 @@ async function drawSignaturesOnCanvas(ctx,item,w,h){
   }
 }
 
+function watermarkAnchor(position,w,h,margin=24){
+  if(position==='top-left')return {x:margin,y:margin,align:'left'};
+  if(position==='top-right')return {x:w-margin,y:margin,align:'right'};
+  if(position==='bottom-left')return {x:margin,y:h-margin,align:'left'};
+  if(position==='bottom-right')return {x:w-margin,y:h-margin,align:'right'};
+  return {x:w/2,y:h/2,align:'center'};
+}
+
+async function drawWatermarksOnCanvas(ctx,item,w,h){
+  const marks=item.watermarks||[];
+  if(!marks.length)return;
+  for(const mark of marks){
+    const anchor=watermarkAnchor(mark.position,w,h,Math.max(18,w*.035));
+    ctx.save();
+    ctx.globalAlpha=Math.max(.05,Math.min(.95,mark.opacity||.25));
+    ctx.translate(anchor.x,anchor.y);
+    ctx.rotate((mark.angle||0)*Math.PI/180);
+    ctx.fillStyle='#4f4f59';
+    ctx.font='700 '+Math.max(12,mark.size||42)+'px sans-serif';
+    ctx.textAlign=anchor.align;
+    ctx.textBaseline='middle';
+    ctx.fillText(mark.text,0,0);
+    ctx.restore();
+  }
+}
+
+function watermarkPng(mark){
+  const scale=2;
+  const size=Math.max(12,mark.size||42);
+  const c=document.createElement('canvas');
+  const ctx=c.getContext('2d');
+  ctx.font='700 '+(size*scale)+'px sans-serif';
+  const width=Math.ceil(ctx.measureText(mark.text).width+size*scale);
+  const height=Math.ceil(size*2.1*scale);
+  c.width=Math.max(2,width);
+  c.height=Math.max(2,height);
+  const x=c.getContext('2d');
+  x.clearRect(0,0,c.width,c.height);
+  x.globalAlpha=Math.max(.05,Math.min(.95,mark.opacity||.25));
+  x.fillStyle='#4f4f59';
+  x.font='700 '+(size*scale)+'px sans-serif';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.fillText(mark.text,c.width/2,c.height/2);
+  return {bytes:dataUrlToBytes(c.toDataURL('image/png')),width:c.width/scale,height:c.height/scale};
+}
+
+async function drawWatermarksOnPdfPage(out,page,item){
+  const marks=item.watermarks||[];
+  if(!marks.length)return;
+  const {width,height}=page.getSize();
+  for(const mark of marks){
+    const pngData=watermarkPng(mark);
+    const png=await out.embedPng(pngData.bytes);
+    const margin=Math.max(18,width*.035);
+    let x=(width-pngData.width)/2;
+    let y=(height-pngData.height)/2;
+    if(mark.position==='top-left'){x=margin;y=height-pngData.height-margin;}
+    if(mark.position==='top-right'){x=width-pngData.width-margin;y=height-pngData.height-margin;}
+    if(mark.position==='bottom-left'){x=margin;y=margin;}
+    if(mark.position==='bottom-right'){x=width-pngData.width-margin;y=margin;}
+    page.drawImage(png,{x,y,width:pngData.width,height:pngData.height,rotate:degrees(mark.angle||0)});
+  }
+}
+
+function openWatermark(){
+  if(!pages.length){if(watermarkInput)watermarkInput.click();return;}
+  openModal('watermarkModal');
+}
+
+async function applyWatermark(){
+  if(!pages.length)return;
+  const textValue=(el('watermarkText')?.value||'').trim();
+  if(!textValue){showToast(t('watermarkEmpty'),'error');return;}
+  const mark={
+    text:textValue,
+    size:Number(el('watermarkSize')?.value||42),
+    opacity:Number(el('watermarkOpacity')?.value||25)/100,
+    angle:Number(el('watermarkAngle')?.value||0),
+    position:el('watermarkPosition')?.value||'center'
+  };
+  const scope=document.querySelector('input[name="watermarkScope"]:checked')?.value||'current';
+  if(scope==='all'){
+    pages.forEach(p=>{p.watermarks=p.watermarks||[];p.watermarks.push({...mark});});
+  }else{
+    pages[selected].watermarks=pages[selected].watermarks||[];
+    pages[selected].watermarks.push(mark);
+  }
+  closeModals();
+  await rebuild();
+  showToast(t('watermarkAdded'));
+}
+
 function openModal(id){
   const modal=el(id),backdrop=el('modalBackdrop');
   if(backdrop){backdrop.hidden=false;backdrop.classList.add('open');}
   if(modal){modal.hidden=false;modal.classList.add('open');}
 }
 function closeModals(){
-  ['compressModal','signModal'].forEach(id=>{
+  ['compressModal','signModal','watermarkModal'].forEach(id=>{
     const n=el(id);
     if(n){n.classList.remove('open');n.hidden=true;}
   });
@@ -387,6 +485,7 @@ async function renderItemToCanvas(item,scaleFactor){
     ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
     await p.render({canvasContext:ctx,viewport}).promise;
     await drawSignaturesOnCanvas(ctx,item,c.width,c.height);
+    await drawWatermarksOnCanvas(ctx,item,c.width,c.height);
     return c;
   }
   const src=imageSources[item.imageIndex];
@@ -404,6 +503,7 @@ async function renderItemToCanvas(item,scaleFactor){
   ctx.drawImage(src.bitmap,-src.width*scale/2,-src.height*scale/2,src.width*scale,src.height*scale);
   ctx.restore();
   await drawSignaturesOnCanvas(ctx,item,c.width,c.height);
+  await drawWatermarksOnCanvas(ctx,item,c.width,c.height);
   return c;
 }
 
@@ -631,6 +731,7 @@ async function addItemToPdf(out,item){
     page.drawImage(embedded,{x:0,y:0,width:w,height:h});
     if(item.rotation)page.setRotation(degrees(item.rotation%360));
     await drawSignaturesOnPdfPage(out,page,item);
+    await drawWatermarksOnPdfPage(out,page,item);
   }else{
     const src=sourceDocs[item.docIndex].libDoc;
     const [copied]=await out.copyPages(src,[item.pageIndex]);
@@ -640,6 +741,7 @@ async function addItemToPdf(out,item){
     }
     out.addPage(copied);
     await drawSignaturesOnPdfPage(out,copied,item);
+    await drawWatermarksOnPdfPage(out,copied,item);
   }
 }
 
@@ -685,7 +787,7 @@ function rotate(d){
 
 function duplicateSelected(){
   if(!pages.length)return;
-  const copy={...pages[selected],signatures:(pages[selected].signatures||[]).map(s=>({...s,bytes:new Uint8Array(s.bytes)})),id:uid()};
+  const copy={...pages[selected],signatures:(pages[selected].signatures||[]).map(s=>({...s,bytes:new Uint8Array(s.bytes)})),watermarks:(pages[selected].watermarks||[]).map(w=>({...w})),id:uid()};
   pages.splice(selected+1,0,copy);
   selected++;
   rebuild();
@@ -766,6 +868,8 @@ on('compressBtn',openCompress);
 on('signBtn',openSign);
 on('homeCompressBtn',openCompress);
 on('homeSignBtn',openSign);
+on('watermarkBtn',openWatermark);
+on('homeWatermarkBtn',openWatermark);
 on('exportBtn',exportPdf);
 on('exportToolbarBtn',exportPdf);
 on('exportPageBtn',exportSelectedPage);
@@ -789,6 +893,9 @@ on('closeSignBtn',closeModals);
 on('cancelSignBtn',closeModals);
 on('clearSignatureBtn',clearSignaturePad);
 on('addSignatureBtn',addSignature);
+on('closeWatermarkBtn',closeModals);
+on('cancelWatermarkBtn',closeModals);
+on('applyWatermarkBtn',applyWatermark);
 on('modalBackdrop',closeModals);
 on('langBtn',async()=>{
   currentLang=currentLang==='en'?'zh':'en';
@@ -803,6 +910,7 @@ if(imageInput)imageInput.onchange=async e=>{await openImageFiles(e.target.files,
 if(mixedInput)mixedInput.onchange=async e=>{await openMixed(e.target.files,false);e.target.value='';};
 if(compressInput)compressInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';if(pages.length)openModal('compressModal');};
 if(signInput)signInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';if(pages.length)openSign();};
+if(watermarkInput)watermarkInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';if(pages.length)openWatermark();};
 
 const drop=el('dropZone');
 if(drop){
