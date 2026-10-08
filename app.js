@@ -547,7 +547,7 @@ function renderSignatureOverlays(){
   });
 }
 
-async function renderPage(){
+async async function renderPage(){
   if(!pages.length)return;
   const item=pages[selected];
   if(item.type==='image')await renderImageItem(item);else await renderPdfItem(item);
@@ -778,7 +778,7 @@ async function runSplit(){
 }
 
 function openCompress(){if(!pages.length){compressInput?.click();return;}openModal('compressModal');}
-async function compressPdf(){
+async async function compressPdf(){
   const mode=q('input[name="compressionLevel"]:checked')?.value||'balanced';closeModals();
   if(mode==='preserve'){await exportIndices(pages.map((_,i)=>i),'pdfcraft-compressed-preserve-text.pdf',t('compressed'),true);return;}
   const cfg=mode==='strong'?{scale:.85,quality:.48}:{scale:1.15,quality:.68};
