@@ -255,7 +255,7 @@ async function renderPdfItem(item){
   await drawSignaturesOnCanvas(ctx,item,vp.width,vp.height);
 }
 
-function renderImageItem(item){
+async function renderImageItem(item){
   const src=imageSources[item.imageIndex];
   const rot=((item.rotation%360)+360)%360;
   const maxWidth=Math.min(900,Math.max(300,el('dropZone').clientWidth-120));
@@ -277,7 +277,7 @@ function renderImageItem(item){
   ctx.rotate(rot*Math.PI/180);
   ctx.drawImage(src.bitmap,-src.width*scale/2,-src.height*scale/2,src.width*scale,src.height*scale);
   ctx.restore();
-  drawSignaturesOnCanvas(ctx,item,cssW,cssH);
+  await drawSignaturesOnCanvas(ctx,item,cssW,cssH);
 }
 
 
@@ -345,8 +345,6 @@ function clearSignaturePad(){
   if(!pad)return;
   const ctx=pad.getContext('2d');
   ctx.clearRect(0,0,pad.width,pad.height);
-  ctx.fillStyle='#fff';
-  ctx.fillRect(0,0,pad.width,pad.height);
   ctx.strokeStyle='#111';
   ctx.lineWidth=3;
   ctx.lineCap='round';
@@ -497,7 +495,7 @@ async function updateProperties(){
 async function renderPage(){
   if(!pages.length)return;
   const item=pages[selected];
-  if(item.type==='image')renderImageItem(item);
+  if(item.type==='image')await renderImageItem(item);
   else await renderPdfItem(item);
   const label=el('pageLabel');
   if(label)label.textContent=t('pageOf',selected+1,pages.length);
