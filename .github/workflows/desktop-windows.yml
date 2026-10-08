@@ -36,6 +36,13 @@ jobs:
       - name: Install JavaScript dependencies
         run: npm install
 
+      - name: Create Windows app icon
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path src-tauri/icons | Out-Null
+          $b64 = "AAABAAEAICAAAAAAIADQAAAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAAgAAAAIAgGAAAAc3p69AAAAJdJREFUeJztl9EJgDAMRFNxE3fRbXQWx3EXnUW/BD+kuUstBbn7TnKPJiltmsf9tIbqWpoLwMysRwPXbaCLL9PhxkAnEDFH81yAqDmanwUoNUfqwDNwC+krA05tAWLOxNEANSQAAVQBYNaQvgdKzN70zxYIQAACYERdRF+9kJ7KngDzsIjWcVtQCuHlQzMQhUDykj6nrQEuEhkk0qrzfwMAAAAASUVORK5CYII="
+          [IO.File]::WriteAllBytes("src-tauri/icons/icon.ico",[Convert]::FromBase64String($b64))
+
       - name: Build Windows installer
         run: npm run tauri build -- --bundles nsis
 
