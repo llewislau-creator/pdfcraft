@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDFCraft — Private PDF Editor</title>
-  <meta name="description" content="A private, browser-based PDF editor for merge, rotate, delete, reorder and export." />
+  <title>PDFCraft — Beautiful, private PDF editing</title>
+  <meta name="description" content="Edit, merge, reorder, rotate and export PDFs privately in your browser." />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -12,49 +12,173 @@
   <div class="app-shell">
     <header class="topbar">
       <div class="brand-wrap">
-        <div class="logo">P</div>
-        <div><div class="brand">PDFCraft</div><div class="tagline">Private PDF tools in your browser</div></div>
+        <div class="logo" aria-hidden="true">
+          <span class="logo-mark">P</span>
+        </div>
+        <div class="brand-copy">
+          <div class="brand">PDFCraft</div>
+          <div class="tagline">Beautiful PDF tools, private by default</div>
+        </div>
       </div>
-      <div class="top-actions">
-        <button class="btn secondary" id="openBtn">Open PDF</button>
-        <button class="btn secondary" id="mergeBtn">Merge PDF</button>
+
+      <nav class="top-actions" aria-label="Primary actions">
+        <button class="btn ghost" id="openBtn">Open PDF</button>
+        <button class="btn soft" id="mergeBtn">Merge PDFs</button>
         <button class="btn primary" id="exportBtn" disabled>Download PDF</button>
-      </div>
+      </nav>
     </header>
+
     <main class="workspace">
       <aside class="sidebar">
-        <div class="sidebar-head"><div><strong>Pages</strong><span id="pageCount">0</span></div><button class="icon-btn" id="addBtn">＋</button></div>
+        <div class="sidebar-head">
+          <div>
+            <span class="eyebrow">DOCUMENT</span>
+            <div class="sidebar-title-row">
+              <strong>Pages</strong>
+              <span class="count-pill" id="pageCount">0</span>
+            </div>
+          </div>
+          <button class="icon-btn" id="addBtn" title="Add PDF" aria-label="Add PDF">＋</button>
+        </div>
         <div id="thumbs" class="thumbs"></div>
+
+        <div class="sidebar-tip">
+          <div class="tip-icon">✦</div>
+          <div>
+            <strong>Tip</strong>
+            <p>Drag page thumbnails to reorder them.</p>
+          </div>
+        </div>
       </aside>
+
       <section class="canvas-area">
         <div class="toolbar">
-          <button class="tool-btn" id="rotateLeft" disabled>↶ Rotate</button>
-          <button class="tool-btn" id="rotateRight" disabled>↷ Rotate</button>
-          <button class="tool-btn danger" id="deletePage" disabled>Delete</button>
+          <div class="toolbar-group">
+            <button class="tool-btn" id="rotateLeft" disabled><span>↶</span> Rotate left</button>
+            <button class="tool-btn" id="rotateRight" disabled><span>↷</span> Rotate right</button>
+            <button class="tool-btn danger" id="deletePage" disabled><span>⌫</span> Delete</button>
+          </div>
+
           <span class="divider"></span>
-          <button class="tool-btn" id="moveUp" disabled>↑ Move</button>
-          <button class="tool-btn" id="moveDown" disabled>↓ Move</button>
+
+          <div class="toolbar-group">
+            <button class="tool-btn" id="moveUp" disabled><span>↑</span> Move up</button>
+            <button class="tool-btn" id="moveDown" disabled><span>↓</span> Move down</button>
+          </div>
+
           <span class="divider"></span>
-          <button class="tool-btn future" disabled>Sign <small>Soon</small></button>
-          <button class="tool-btn future" disabled>OCR <small>Soon</small></button>
-          <button class="tool-btn future" disabled>Compress <small>Soon</small></button>
-          <button class="tool-btn future" disabled>AI <small>Soon</small></button>
+
+          <div class="toolbar-group future-group">
+            <button class="tool-btn future" disabled>Sign <small>Soon</small></button>
+            <button class="tool-btn future" disabled>OCR <small>Soon</small></button>
+            <button class="tool-btn future" disabled>Compress <small>Soon</small></button>
+            <button class="tool-btn future ai-tool" disabled>✦ AI <small>Soon</small></button>
+          </div>
         </div>
+
         <div id="dropZone" class="drop-zone">
           <div id="emptyState" class="empty-state">
-            <div class="drop-icon">PDF</div><h1>Edit PDFs privately</h1>
-            <p>Drop one or more PDF files here. Your files stay on your device.</p>
-            <div class="empty-actions"><button class="btn primary" id="chooseBtn">Choose PDF</button><button class="btn secondary" id="chooseMultiBtn">Merge PDFs</button></div>
-            <div class="privacy-note">No upload required · Browser-only processing</div>
+            <section class="hero-card">
+              <div class="hero-badge">100% browser-based · No upload required</div>
+              <div class="hero-visual">
+                <div class="doc-card doc-a"></div>
+                <div class="doc-card doc-b"></div>
+                <div class="hero-icon">PDF</div>
+              </div>
+              <h1>Edit PDFs beautifully.<br><span>Right in your browser.</span></h1>
+              <p class="hero-copy">Merge, reorder, rotate and export PDF files with a clean editor that keeps your documents on your device.</p>
+
+              <div class="empty-actions">
+                <button class="btn primary hero-primary" id="chooseBtn">Choose a PDF</button>
+                <button class="btn soft hero-secondary" id="chooseMultiBtn">Merge PDFs</button>
+              </div>
+
+              <div class="trust-row">
+                <span>✓ No account</span>
+                <span>✓ No uploads</span>
+                <span>✓ Free to start</span>
+              </div>
+            </section>
+
+            <section class="tool-section">
+              <div class="section-heading">
+                <div>
+                  <span class="eyebrow">POPULAR TOOLS</span>
+                  <h2>Everything you need for everyday PDFs</h2>
+                </div>
+                <span class="section-note">Fast, simple, private</span>
+              </div>
+
+              <div class="tool-grid">
+                <button class="tool-card featured" id="toolEditCard" type="button">
+                  <div class="tool-card-icon edit">✎</div>
+                  <div><strong>Edit PDF</strong><span>Reorder, rotate & remove pages</span></div>
+                </button>
+
+                <button class="tool-card" id="toolMergeCard" type="button">
+                  <div class="tool-card-icon merge">⌘</div>
+                  <div><strong>Merge PDF</strong><span>Combine multiple PDF files</span></div>
+                </button>
+
+                <div class="tool-card muted-card">
+                  <div class="tool-card-icon split">⇥</div>
+                  <div><strong>Split PDF</strong><span>Extract selected pages</span></div>
+                  <span class="soon-badge">Soon</span>
+                </div>
+
+                <div class="tool-card muted-card">
+                  <div class="tool-card-icon compress">⇣</div>
+                  <div><strong>Compress PDF</strong><span>Reduce document size</span></div>
+                  <span class="soon-badge">Soon</span>
+                </div>
+
+                <div class="tool-card muted-card">
+                  <div class="tool-card-icon sign">✓</div>
+                  <div><strong>Sign PDF</strong><span>Add a secure signature</span></div>
+                  <span class="soon-badge">Soon</span>
+                </div>
+
+                <div class="tool-card muted-card">
+                  <div class="tool-card-icon ai">✦</div>
+                  <div><strong>AI Assistant</strong><span>Ask questions about your PDF</span></div>
+                  <span class="soon-badge">Soon</span>
+                </div>
+              </div>
+            </section>
           </div>
-          <div id="viewerWrap" class="viewer-wrap hidden"><div id="pageLabel" class="page-label">Page 1</div><canvas id="pdfCanvas"></canvas></div>
+
+          <div id="viewerWrap" class="viewer-wrap hidden">
+            <div class="viewer-topline">
+              <div id="pageLabel" class="page-label">Page 1</div>
+              <div class="viewer-hint">Drag thumbnails to reorder pages</div>
+            </div>
+
+            <div class="paper-stage">
+              <canvas id="pdfCanvas"></canvas>
+            </div>
+          </div>
         </div>
       </section>
     </main>
-    <footer class="statusbar"><span id="status">Ready</span><span>PDFCraft MVP · Local processing</span></footer>
+
+    <footer class="statusbar">
+      <div class="status-left"><span class="status-dot"></span><span id="status">Ready</span></div>
+      <div class="status-right">Private processing · Your files stay on this device</div>
+    </footer>
   </div>
+
   <input id="fileInput" type="file" accept="application/pdf,.pdf" hidden />
   <input id="multiInput" type="file" accept="application/pdf,.pdf" multiple hidden />
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script type="module" src="app.js"></script>
-</body></html>
+  <script type="module">
+    import './app.js';
+    const edit = document.getElementById('toolEditCard');
+    const merge = document.getElementById('toolMergeCard');
+    const choose = document.getElementById('chooseBtn');
+    const chooseMulti = document.getElementById('chooseMultiBtn');
+    if (edit && choose) edit.addEventListener('click', () => choose.click());
+    if (merge && chooseMulti) merge.addEventListener('click', () => chooseMulti.click());
+  </script>
+</body>
+</html>
