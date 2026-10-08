@@ -3,26 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDFCraft — Beautiful, private PDF editing</title>
-  <meta name="description" content="Edit, merge, reorder, rotate and export PDFs privately in your browser." />
+  <title>PDFCraft — Your private PDF workspace</title>
+  <meta name="description" content="Edit, merge, sign, watermark, split, compress and export PDFs privately in your browser." />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-  <link rel="stylesheet" href="styles.css?v=20261008-4" />
+  <link rel="stylesheet" href="styles.css?v=20261008-5" />
 </head>
 <body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-6h5v6"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5"/><path d="M5 12h8a6 6 0 0 1 6 6"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 7 5 5-5 5"/><path d="M19 12h-8a6 6 0 0 0-6 6"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-rotate-left" viewBox="0 0 24 24"><path d="M4 9V4h5"/><path d="M4.5 4.5A9 9 0 1 1 3 14"/></symbol>
+    <symbol id="i-rotate-right" viewBox="0 0 24 24"><path d="M20 9V4h-5"/><path d="M19.5 4.5A9 9 0 1 0 21 14"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="m7 7 1 13h8l1-13"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-tools" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5 5L4 17l3 3 5.7-5.7a4 4 0 0 0 5-5l-2.4 2.4-3-3 2.4-2.4Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></symbol>
+    <symbol id="i-pages" viewBox="0 0 24 24"><rect x="6" y="5" width="12" height="15" rx="2"/><path d="M9 2h7a2 2 0 0 1 2 2"/></symbol>
+    <symbol id="i-merge" viewBox="0 0 24 24"><path d="M7 3v5a4 4 0 0 0 4 4h6"/><path d="m14 9 3 3-3 3"/><path d="M7 21v-5a4 4 0 0 1 4-4"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 3-3 4 4"/></symbol>
+    <symbol id="i-split" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h4M5 17h4M15 7h4M15 17h4"/></symbol>
+    <symbol id="i-compress" viewBox="0 0 24 24"><path d="m8 3 4 4 4-4"/><path d="M12 7V2"/><path d="m8 21 4-4 4 4"/><path d="M12 17v5"/><path d="M4 12h16"/></symbol>
+    <symbol id="i-sign" viewBox="0 0 24 24"><path d="M4 18c2-5 3-8 5-8 2 0 0 7 3 7 2 0 2-4 4-4 1 0 1 2 4 2"/><path d="M4 21h16"/></symbol>
+    <symbol id="i-watermark" viewBox="0 0 24 24"><path d="m4 5 4 14 4-9 4 9 4-14"/></symbol>
+    <symbol id="i-number" viewBox="0 0 24 24"><path d="M9 3 7 21M17 3l-2 18M4 9h16M3 15h16"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></symbol>
+  </svg>
+
   <div class="app-shell" id="appShell">
     <header class="topbar">
       <button class="brand-wrap brand-button" id="brandHomeBtn" type="button" aria-label="PDFCraft Home">
-        <div class="logo" aria-hidden="true"><span class="logo-mark">P</span></div>
+        <div class="logo" aria-hidden="true"><span>P</span></div>
         <div class="brand-copy">
           <div class="brand">PDFCraft</div>
           <div class="tagline" data-i18n="tagline">Private PDF tools, beautifully simple</div>
         </div>
       </button>
-
-      <nav class="top-actions" aria-label="Primary actions">
+      <div class="top-actions">
         <button class="btn ghost compact" id="langBtn" type="button">中文</button>
-        <button class="btn primary top-download editor-only" id="exportBtn" disabled data-i18n="downloadPdf">Download PDF</button>
-      </nav>
+        <button class="btn primary editor-only" id="exportBtn" type="button" disabled>
+          <svg><use href="#i-download"/></svg><span data-i18n="downloadPdf">Download PDF</span>
+        </button>
+      </div>
     </header>
 
     <main class="workspace">
@@ -35,63 +62,48 @@
               <span class="count-pill" id="pageCount">0</span>
             </div>
           </div>
-          <button class="icon-btn" id="addBtn" type="button" title="Add PDF or image" aria-label="Add PDF or image">＋</button>
+          <button class="icon-btn" id="addBtn" type="button" data-tooltip="Add files" aria-label="Add files"><svg><use href="#i-plus"/></svg></button>
+        </div>
+        <div class="selection-bar hidden" id="selectionBar">
+          <span id="selectionCount">0 selected</span>
+          <div>
+            <button id="bulkRotateBtn" type="button" data-tooltip="Rotate selected"><svg><use href="#i-rotate-right"/></svg></button>
+            <button id="bulkExportBtn" type="button" data-tooltip="Export selected"><svg><use href="#i-download"/></svg></button>
+            <button id="bulkDeleteBtn" type="button" class="danger" data-tooltip="Delete selected"><svg><use href="#i-trash"/></svg></button>
+          </div>
         </div>
         <div id="thumbs" class="thumbs"></div>
         <div class="sidebar-tip">
           <span class="tip-icon">✦</span>
-          <div><strong data-i18n="tip">Tip</strong><p data-i18n="tipText">Drag pages to reorder them.</p></div>
+          <div><strong data-i18n="tip">Tip</strong><p data-i18n="tipText">Shift-click for a range. Cmd/Ctrl-click to select multiple pages.</p></div>
         </div>
       </aside>
 
       <section class="canvas-area">
         <div class="toolbar editor-only" id="editorToolbar">
-          <div class="toolbar-section">
-            <span class="toolbar-label" data-i18n="navigation">NAVIGATION</span>
-            <div class="toolbar-group">
-              <button class="tool-btn" id="homeBtn" type="button"><span>⌂</span><span data-i18n="home">Home</span></button>
-              <button class="tool-btn" id="prevBtn" type="button" disabled><span>←</span><span data-i18n="previous">Previous</span></button>
-              <button class="tool-btn" id="nextBtn" type="button" disabled><span>→</span><span data-i18n="next">Next</span></button>
-            </div>
+          <div class="toolbar-group primary-nav">
+            <button class="tool-btn" id="homeBtn" type="button" data-tooltip="Home"><svg><use href="#i-home"/></svg><span data-i18n="home">Home</span></button>
+            <button class="tool-btn" id="undoBtn" type="button" disabled data-tooltip="Undo"><svg><use href="#i-undo"/></svg><span data-i18n="undo">Undo</span></button>
+            <button class="tool-btn" id="redoBtn" type="button" disabled data-tooltip="Redo"><svg><use href="#i-redo"/></svg><span data-i18n="redo">Redo</span></button>
           </div>
-
-          <div class="toolbar-divider"></div>
-
-          <div class="toolbar-section">
-            <span class="toolbar-label" data-i18n="pageActions">PAGE</span>
-            <div class="toolbar-group">
-              <button class="tool-btn" id="rotateLeft" disabled><span>↶</span><span data-i18n="rotateLeft">Rotate left</span></button>
-              <button class="tool-btn" id="rotateRight" disabled><span>↷</span><span data-i18n="rotateRight">Rotate right</span></button>
-              <button class="tool-btn" id="duplicatePage" disabled><span>⧉</span><span data-i18n="duplicate">Duplicate</span></button>
-              <button class="tool-btn danger" id="deletePage" disabled><span>⌫</span><span data-i18n="delete">Delete</span></button>
-              <button class="tool-btn icon-only desktop-secondary" id="moveUp" disabled title="Move up">↑</button>
-              <button class="tool-btn icon-only desktop-secondary" id="moveDown" disabled title="Move down">↓</button>
-            </div>
+          <span class="toolbar-sep"></span>
+          <div class="toolbar-group">
+            <button class="tool-btn icon-only" id="prevBtn" type="button" disabled data-tooltip="Previous page"><svg><use href="#i-left"/></svg></button>
+            <div class="page-chip" id="pageChip">1 / 1</div>
+            <button class="tool-btn icon-only" id="nextBtn" type="button" disabled data-tooltip="Next page"><svg><use href="#i-right"/></svg></button>
           </div>
-
-          <div class="toolbar-divider"></div>
-
-          <div class="toolbar-section">
-            <span class="toolbar-label" data-i18n="documentActions">DOCUMENT</span>
-            <div class="toolbar-group">
-              <button class="tool-btn" id="openBtn" type="button"><span>＋</span><span data-i18n="addFiles">Add files</span></button>
-              <button class="tool-btn" id="mergeBtn" type="button"><span>⌘</span><span data-i18n="mergePdfs">Merge PDFs</span></button>
-              <button class="tool-btn" id="imagesBtn" type="button"><span>▧</span><span data-i18n="imagesToPdf">Images to PDF</span></button>
-              <button class="tool-btn" id="compressBtn" type="button"><span>⇣</span><span data-i18n="compressPdf">Compress PDF</span></button>
-              <button class="tool-btn" id="signBtn" type="button"><span>✓</span><span data-i18n="signPdf">Sign PDF</span></button>
-              <button class="tool-btn" id="watermarkBtn" type="button"><span>W</span><span data-i18n="watermarkPdf">Watermark</span></button>
-              <button class="tool-btn" id="splitBtn" type="button"><span>⇥</span><span data-i18n="splitPdf">Split PDF</span></button>
-            </div>
+          <span class="toolbar-sep"></span>
+          <div class="toolbar-group">
+            <button class="tool-btn" id="rotateLeft" type="button" disabled><svg><use href="#i-rotate-left"/></svg><span data-i18n="rotateLeft">Rotate left</span></button>
+            <button class="tool-btn" id="rotateRight" type="button" disabled><svg><use href="#i-rotate-right"/></svg><span data-i18n="rotateRight">Rotate right</span></button>
+            <button class="tool-btn" id="duplicatePage" type="button" disabled><svg><use href="#i-copy"/></svg><span data-i18n="duplicate">Duplicate</span></button>
+            <button class="tool-btn danger" id="deletePage" type="button" disabled><svg><use href="#i-trash"/></svg><span data-i18n="delete">Delete</span></button>
           </div>
-
-          <div class="toolbar-divider"></div>
-
-          <div class="toolbar-section export-section">
-            <span class="toolbar-label" data-i18n="export">EXPORT</span>
-            <div class="toolbar-group">
-              <button class="tool-btn" id="exportPageBtn" disabled><span>⇩</span><span data-i18n="exportPage">This page</span></button>
-              <button class="tool-btn accent-tool" id="exportToolbarBtn" disabled><span>↓</span><span data-i18n="downloadPdf">Download PDF</span></button>
-            </div>
+          <div class="toolbar-spacer"></div>
+          <div class="toolbar-group">
+            <button class="tool-btn" id="openBtn" type="button"><svg><use href="#i-plus"/></svg><span data-i18n="addFiles">Add files</span></button>
+            <button class="tool-btn tools-trigger" id="toolsBtn" type="button"><svg><use href="#i-tools"/></svg><span data-i18n="tools">Tools</span></button>
+            <button class="tool-btn accent-tool" id="exportToolbarBtn" type="button" disabled><svg><use href="#i-download"/></svg><span data-i18n="downloadPdf">Download PDF</span></button>
           </div>
         </div>
 
@@ -100,19 +112,16 @@
             <section class="hero">
               <div class="hero-badge"><span class="secure-dot"></span><span data-i18n="browserOnly">100% local processing · No upload required</span></div>
               <div class="hero-art" aria-hidden="true">
-                <div class="art-sheet art-left"></div>
-                <div class="art-sheet art-right"></div>
-                <div class="art-main"><span>PDF</span></div>
+                <div class="art-sheet art-left"></div><div class="art-sheet art-right"></div><div class="art-main">PDF</div>
               </div>
-              <h1><span data-i18n="hero1">Your PDF workspace.</span><br><span class="gradient-text" data-i18n="hero2">Simple, private, fast.</span></h1>
-              <p class="hero-copy" data-i18n="heroCopy">Edit PDFs, combine documents, and turn JPG or PNG images into one PDF — directly in your browser.</p>
-              <div class="hero-primary-row">
-                <button class="btn primary hero-main" id="chooseBtn" type="button"><span data-i18n="openPdf">Open PDF</span><span class="arrow">→</span></button>
-              </div>
+              <h1><span data-i18n="hero1">Your private PDF workspace.</span><br><span class="gradient-text" data-i18n="hero2">Edit without uploading.</span></h1>
+              <p class="hero-copy" data-i18n="heroCopy">Edit, merge, sign and export PDFs while your files stay on your device.</p>
+              <button class="btn primary hero-main" id="chooseBtn" type="button"><span data-i18n="openPdf">Open PDF</span><span>→</span></button>
+              <p class="drop-copy" data-i18n="dropCopy">or drag PDF, JPG and PNG files here</p>
               <div class="hero-secondary-row">
-                <button class="text-action" id="chooseMultiBtn" type="button"><span class="mini-icon merge-icon">⌘</span><span data-i18n="mergePdfs">Merge PDFs</span></button>
-                <span class="hero-separator"></span>
-                <button class="text-action" id="chooseImagesBtn" type="button"><span class="mini-icon image-icon">▧</span><span data-i18n="imagesToPdf">Images to PDF</span></button>
+                <button class="text-action" id="chooseMultiBtn" type="button"><svg><use href="#i-merge"/></svg><span data-i18n="mergePdfs">Merge PDFs</span></button>
+                <span></span>
+                <button class="text-action" id="chooseImagesBtn" type="button"><svg><use href="#i-image"/></svg><span data-i18n="imagesToPdf">Images to PDF</span></button>
               </div>
               <div class="trust-row">
                 <span data-i18n="noAccount">✓ No account</span>
@@ -128,70 +137,95 @@
               </div>
               <div class="tool-grid">
                 <button class="tool-card featured" id="toolEditCard" type="button">
-                  <div class="tool-card-icon edit">✎</div>
-                  <div><strong data-i18n="editPdf">Edit PDF</strong><span data-i18n="editPdfDesc">Reorder, rotate and remove pages</span></div>
-                  <span class="card-arrow">→</span>
+                  <div class="tool-card-icon edit"><svg><use href="#i-pages"/></svg></div>
+                  <div><strong data-i18n="editPdf">Edit PDF</strong><span data-i18n="editPdfDesc">Reorder, rotate and remove pages</span></div><span class="card-arrow">→</span>
+                </button>
+                <button class="tool-card" id="homeCompressBtn" type="button">
+                  <div class="tool-card-icon compress"><svg><use href="#i-compress"/></svg></div>
+                  <div><strong data-i18n="compressPdf">Compress PDF</strong><span data-i18n="compressPdfDesc">Reduce file size with quality control</span></div><span class="card-arrow">→</span>
                 </button>
                 <button class="tool-card" id="toolMergeCard" type="button">
-                  <div class="tool-card-icon merge">⌘</div>
-                  <div><strong data-i18n="mergePdf">Merge PDF</strong><span data-i18n="mergePdfDesc">Combine multiple PDF files</span></div>
-                  <span class="card-arrow">→</span>
+                  <div class="tool-card-icon merge"><svg><use href="#i-merge"/></svg></div>
+                  <div><strong data-i18n="mergePdf">Merge PDF</strong><span data-i18n="mergePdfDesc">Combine multiple PDF files</span></div><span class="card-arrow">→</span>
                 </button>
                 <button class="tool-card" id="toolImageCard" type="button">
-                  <div class="tool-card-icon image">▧</div>
-                  <div><strong data-i18n="imagesToPdf">Images to PDF</strong><span data-i18n="imagesToPdfDesc">Combine JPG and PNG into one PDF</span></div>
-                  <span class="card-arrow">→</span>
-                </button>
-                <button class="tool-card" id="toolSplitCard" type="button">
-                  <div class="tool-card-icon split">⇥</div>
-                  <div><strong data-i18n="splitPdf">Split PDF</strong><span data-i18n="splitPdfDesc">Extract selected pages</span></div>
-                  <span class="card-arrow">→</span>
+                  <div class="tool-card-icon image"><svg><use href="#i-image"/></svg></div>
+                  <div><strong data-i18n="imagesToPdf">Images to PDF</strong><span data-i18n="imagesToPdfDesc">Turn JPG and PNG into a polished PDF</span></div><span class="card-arrow">→</span>
                 </button>
               </div>
             </section>
 
-            <section class="more-tools">
-              <div class="more-heading"><strong data-i18n="moreTools">More tools</strong><span data-i18n="moreToolsDesc">More PDF workflows are on the way.</span></div>
-              <div class="more-list">
-                <button class="mini-tool functional" id="homeCompressBtn" type="button"><span class="mini-tool-icon">⇣</span><span data-i18n="compressPdf">Compress PDF</span><b data-i18n="available">Available</b></button>
-                <button class="mini-tool functional" id="homeSignBtn" type="button"><span class="mini-tool-icon">✓</span><span data-i18n="signPdf">Sign PDF</span><b data-i18n="available">Available</b></button>
-                <button class="mini-tool functional" id="homeWatermarkBtn" type="button"><span class="mini-tool-icon">W</span><span data-i18n="watermarkPdf">Watermark PDF</span><b data-i18n="available">Available</b></button>
-                <button class="mini-tool functional" id="homeSplitBtn" type="button"><span class="mini-tool-icon">⇥</span><span data-i18n="splitPdf">Split PDF</span><b data-i18n="available">Available</b></button>
-                <div class="mini-tool"><span class="mini-tool-icon">✦</span><span data-i18n="aiAssistant">AI Assistant</span><em data-i18n="soon">Soon</em></div>
+            <section class="all-tools">
+              <div class="section-heading compact-heading"><div><span class="eyebrow" data-i18n="allTools">ALL TOOLS</span><h2 data-i18n="moreTools">More PDF workflows</h2></div></div>
+              <div class="mini-tools-grid">
+                <button class="mini-tool" id="toolSplitCard" type="button"><svg><use href="#i-split"/></svg><span data-i18n="splitPdf">Split PDF</span></button>
+                <button class="mini-tool" id="homeSignBtn" type="button"><svg><use href="#i-sign"/></svg><span data-i18n="signPdf">Sign PDF</span></button>
+                <button class="mini-tool" id="homeWatermarkBtn" type="button"><svg><use href="#i-watermark"/></svg><span data-i18n="watermarkPdf">Watermark PDF</span></button>
+                <button class="mini-tool" id="homePageNumberBtn" type="button"><svg><use href="#i-number"/></svg><span data-i18n="pageNumbers">Page numbers</span></button>
               </div>
             </section>
           </div>
 
           <div id="viewerWrap" class="viewer-wrap hidden">
             <div class="viewer-topline">
-              <button class="mobile-pages-btn" id="mobilePagesBtn" type="button"><span>▤</span><span data-i18n="pages">Pages</span><b id="mobilePageCount">0</b></button>
+              <button class="mobile-pages-btn" id="mobilePagesBtn" type="button"><svg><use href="#i-pages"/></svg><span data-i18n="pages">Pages</span><b id="mobilePageCount">0</b></button>
               <div id="pageLabel" class="page-label">Page 1</div>
-              <div class="viewer-hint" data-i18n="viewerHint">Drag thumbnails to reorder pages</div>
+              <div class="viewer-hint" data-i18n="viewerHint">Select multiple pages with Shift or Cmd/Ctrl</div>
             </div>
-            <div class="paper-stage"><canvas id="pdfCanvas"></canvas></div>
+            <div class="paper-stage" id="paperStage">
+              <div class="paper-wrap" id="paperWrap">
+                <canvas id="pdfCanvas"></canvas>
+                <div id="overlayLayer" class="overlay-layer"></div>
+              </div>
+            </div>
           </div>
         </div>
+
+        <aside class="tools-drawer" id="toolsDrawer" aria-hidden="true">
+          <div class="drawer-title-row">
+            <div><span class="eyebrow" data-i18n="documentTools">DOCUMENT TOOLS</span><h3 data-i18n="tools">Tools</h3></div>
+            <button class="icon-btn" id="closeToolsBtn" type="button"><svg><use href="#i-x"/></svg></button>
+          </div>
+          <div class="drawer-tools-grid">
+            <button id="mergeBtn" type="button"><svg><use href="#i-merge"/></svg><div><strong data-i18n="mergePdfs">Merge PDFs</strong><span data-i18n="mergePdfDesc">Combine multiple PDF files</span></div></button>
+            <button id="imagesBtn" type="button"><svg><use href="#i-image"/></svg><div><strong data-i18n="imagesToPdf">Images to PDF</strong><span data-i18n="imagesToPdfDesc">JPG / PNG with layout options</span></div></button>
+            <button id="splitBtn" type="button"><svg><use href="#i-split"/></svg><div><strong data-i18n="splitPdf">Split PDF</strong><span data-i18n="splitPdfDesc">Extract selected pages</span></div></button>
+            <button id="compressBtn" type="button"><svg><use href="#i-compress"/></svg><div><strong data-i18n="compressPdf">Compress PDF</strong><span data-i18n="compressPdfDesc">Reduce file size</span></div></button>
+            <button id="signBtn" type="button"><svg><use href="#i-sign"/></svg><div><strong data-i18n="signPdf">Sign PDF</strong><span data-i18n="signPdfDesc">Draw and place a signature</span></div></button>
+            <button id="watermarkBtn" type="button"><svg><use href="#i-watermark"/></svg><div><strong data-i18n="watermarkPdf">Watermark PDF</strong><span data-i18n="watermarkPdfDesc">Add text watermark</span></div></button>
+            <button id="pageNumberBtn" type="button"><svg><use href="#i-number"/></svg><div><strong data-i18n="pageNumbers">Page numbers</strong><span data-i18n="pageNumbersDesc">Add page numbers to every page</span></div></button>
+          </div>
+        </aside>
       </section>
 
       <aside class="properties-panel" id="propertiesPanel">
-        <div class="properties-head">
-          <div><span class="eyebrow" data-i18n="selectedPage">SELECTED PAGE</span><h3 data-i18n="properties">Properties</h3></div>
-        </div>
+        <div class="properties-head"><div><span class="eyebrow" data-i18n="selectedPage">SELECTED PAGE</span><h3 data-i18n="properties">Properties</h3></div></div>
         <div class="property-preview"><div class="property-page-number" id="propertyPageNumber">1</div><span id="propertyType">PDF</span></div>
         <div class="property-list">
           <div class="property-row"><span data-i18n="pageSize">Page size</span><strong id="propertySize">—</strong></div>
           <div class="property-row"><span data-i18n="rotation">Rotation</span><strong id="propertyRotation">0°</strong></div>
           <div class="property-row"><span data-i18n="position">Position</span><strong id="propertyPosition">1 / 1</strong></div>
         </div>
+        <div class="applied-panel">
+          <div class="panel-title"><span data-i18n="applied">Applied</span><small data-i18n="clickToRemove">click × to remove</small></div>
+          <div id="appliedItems" class="applied-items"><div class="empty-applied" data-i18n="nothingApplied">Nothing applied to this page.</div></div>
+        </div>
         <div class="properties-actions">
-          <button class="property-btn" id="propRotateBtn" type="button"><span>↷</span><span data-i18n="rotateRight">Rotate right</span></button>
-          <button class="property-btn" id="propDuplicateBtn" type="button"><span>⧉</span><span data-i18n="duplicate">Duplicate</span></button>
-          <button class="property-btn" id="propExportBtn" type="button"><span>⇩</span><span data-i18n="exportPage">Export this page</span></button>
-          <button class="property-btn danger" id="propDeleteBtn" type="button"><span>⌫</span><span data-i18n="delete">Delete</span></button>
+          <button class="property-btn" id="propRotateBtn" type="button"><svg><use href="#i-rotate-right"/></svg><span data-i18n="rotateRight">Rotate right</span></button>
+          <button class="property-btn" id="propDuplicateBtn" type="button"><svg><use href="#i-copy"/></svg><span data-i18n="duplicate">Duplicate</span></button>
+          <button class="property-btn" id="propExportBtn" type="button"><svg><use href="#i-download"/></svg><span data-i18n="exportPage">Export page</span></button>
+          <button class="property-btn danger" id="propDeleteBtn" type="button"><svg><use href="#i-trash"/></svg><span data-i18n="delete">Delete</span></button>
         </div>
         <div class="privacy-card"><span>◉</span><div><strong data-i18n="privateLocal">Private by default</strong><p data-i18n="privateLocalDesc">Your files never leave this device.</p></div></div>
       </aside>
     </main>
+
+    <nav class="mobile-bottom-bar editor-only">
+      <button id="mobilePagesBarBtn" type="button"><svg><use href="#i-pages"/></svg><span data-i18n="pages">Pages</span></button>
+      <button id="mobileToolsBtn" type="button"><svg><use href="#i-tools"/></svg><span data-i18n="tools">Tools</span></button>
+      <button id="mobileUndoBtn" type="button" disabled><svg><use href="#i-undo"/></svg><span data-i18n="undo">Undo</span></button>
+      <button id="mobileDownloadBtn" type="button" disabled><svg><use href="#i-download"/></svg><span data-i18n="download">Download</span></button>
+    </nav>
 
     <div class="mobile-drawer-backdrop" id="mobileDrawerBackdrop"></div>
     <div class="mobile-pages-drawer" id="mobilePagesDrawer">
@@ -202,131 +236,88 @@
 
     <div class="modal-backdrop" id="modalBackdrop" hidden></div>
 
-    <section class="modal-card" id="compressModal" aria-modal="true" role="dialog" hidden>
-      <div class="modal-head">
-        <div><span class="eyebrow" data-i18n="compressPdf">Compress PDF</span><h3 data-i18n="compressTitle">Choose compression level</h3></div>
-        <button class="modal-close" id="closeCompressBtn" type="button">×</button>
-      </div>
-      <p class="modal-copy" data-i18n="compressNote">Compression rebuilds pages as optimized images. Smaller files may reduce text sharpness and remove selectable text.</p>
+    <section class="modal-card" id="leaveModal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-head"><div><span class="eyebrow" data-i18n="unsaved">UNSAVED CHANGES</span><h3 data-i18n="leaveTitle">Leave this document?</h3></div></div>
+      <p class="modal-copy" data-i18n="leaveNote">You have changes that have not been downloaded yet.</p>
+      <div class="modal-actions"><button class="btn ghost" id="stayBtn" type="button" data-i18n="keepEditing">Keep editing</button><button class="btn danger-btn" id="leaveBtn" type="button" data-i18n="leave">Leave</button></div>
+    </section>
+
+    <section class="modal-card" id="compressModal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-head"><div><span class="eyebrow" data-i18n="compressPdf">Compress PDF</span><h3 data-i18n="compressTitle">Choose compression mode</h3></div><button class="modal-close" data-close-modal type="button">×</button></div>
       <div class="compression-options">
-        <label class="compression-option">
-          <input type="radio" name="compressionLevel" value="light">
-          <span><strong data-i18n="compressLight">Light</strong><small data-i18n="compressLightDesc">Best quality · modest size reduction</small></span>
-        </label>
-        <label class="compression-option selected">
-          <input type="radio" name="compressionLevel" value="balanced" checked>
-          <span><strong data-i18n="compressBalanced">Balanced</strong><small data-i18n="compressBalancedDesc">Recommended for most files</small></span>
-        </label>
-        <label class="compression-option">
-          <input type="radio" name="compressionLevel" value="strong">
-          <span><strong data-i18n="compressStrong">Strong</strong><small data-i18n="compressStrongDesc">Smaller file · lower image quality</small></span>
-        </label>
+        <label class="compression-option"><input type="radio" name="compressionLevel" value="preserve"><span><strong data-i18n="compressPreserve">Preserve text</strong><small data-i18n="compressPreserveDesc">Keeps selectable text. Size reduction may be modest.</small></span></label>
+        <label class="compression-option"><input type="radio" name="compressionLevel" value="balanced" checked><span><strong data-i18n="compressBalanced">Balanced</strong><small data-i18n="compressBalancedDesc">Rebuilds pages as optimized images.</small></span></label>
+        <label class="compression-option"><input type="radio" name="compressionLevel" value="strong"><span><strong data-i18n="compressStrong">Maximum</strong><small data-i18n="compressStrongDesc">Smallest file, lower image quality.</small></span></label>
       </div>
-      <div class="modal-actions">
-        <button class="btn ghost" id="cancelCompressBtn" type="button" data-i18n="cancel">Cancel</button>
-        <button class="btn primary" id="runCompressBtn" type="button" data-i18n="compressDownload">Compress & Download</button>
-      </div>
+      <div class="warning-card" data-i18n="compressWarning">Balanced and Maximum compression remove selectable text because pages are rasterized.</div>
+      <div class="modal-actions"><button class="btn ghost" data-close-modal type="button" data-i18n="cancel">Cancel</button><button class="btn primary" id="runCompressBtn" type="button" data-i18n="compressDownload">Compress & Download</button></div>
     </section>
 
-    <section class="modal-card" id="signModal" aria-modal="true" role="dialog" hidden>
-      <div class="modal-head">
-        <div><span class="eyebrow" data-i18n="signPdf">Sign PDF</span><h3 data-i18n="signatureTitle">Draw your signature</h3></div>
-        <button class="modal-close" id="closeSignBtn" type="button">×</button>
-      </div>
-      <p class="modal-copy" data-i18n="signatureNote">Draw below, then add the signature to the selected page.</p>
+    <section class="modal-card" id="signModal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-head"><div><span class="eyebrow" data-i18n="signPdf">Sign PDF</span><h3 data-i18n="signatureTitle">Draw your signature</h3></div><button class="modal-close" data-close-modal type="button">×</button></div>
+      <p class="modal-copy" data-i18n="signatureNote">Draw your signature, then drag it into position on the page.</p>
       <div class="signature-pad-wrap"><canvas id="signaturePad" width="640" height="220"></canvas></div>
-      <div class="signature-options">
-        <label><span data-i18n="signaturePosition">Position</span>
-          <select id="signaturePosition">
-            <option value="bottom-right" data-i18n="bottomRight">Bottom right</option>
-            <option value="bottom-left" data-i18n="bottomLeft">Bottom left</option>
-            <option value="center" data-i18n="center">Center</option>
-          </select>
-        </label>
-      </div>
-      <div class="modal-actions split-actions">
-        <button class="btn ghost" id="clearSignatureBtn" type="button" data-i18n="clear">Clear</button>
-        <div>
-          <button class="btn ghost" id="cancelSignBtn" type="button" data-i18n="cancel">Cancel</button>
-          <button class="btn primary" id="addSignatureBtn" type="button" data-i18n="addSignature">Add signature</button>
-        </div>
-      </div>
+      <div class="modal-actions split-actions"><button class="btn ghost" id="clearSignatureBtn" type="button" data-i18n="clear">Clear</button><div><button class="btn ghost" data-close-modal type="button" data-i18n="cancel">Cancel</button><button class="btn primary" id="addSignatureBtn" type="button" data-i18n="addSignature">Add signature</button></div></div>
     </section>
 
-    <section class="modal-card" id="watermarkModal" aria-modal="true" role="dialog" hidden>
-      <div class="modal-head">
-        <div><span class="eyebrow" data-i18n="watermarkPdf">Watermark PDF</span><h3 data-i18n="watermarkTitle">Add text watermark</h3></div>
-        <button class="modal-close" id="closeWatermarkBtn" type="button">×</button>
-      </div>
-      <p class="modal-copy" data-i18n="watermarkNote">Customize the watermark, then apply it to this page or every page.</p>
-
+    <section class="modal-card" id="watermarkModal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-head"><div><span class="eyebrow" data-i18n="watermarkPdf">Watermark PDF</span><h3 data-i18n="watermarkTitle">Add text watermark</h3></div><button class="modal-close" data-close-modal type="button">×</button></div>
       <div class="watermark-form">
-        <label class="field-block">
-          <span data-i18n="watermarkText">Watermark text</span>
-          <input id="watermarkText" type="text" maxlength="80" value="CONFIDENTIAL" />
-        </label>
-
+        <label class="field-block"><span data-i18n="watermarkText">Watermark text</span><input id="watermarkText" type="text" maxlength="80" value="CONFIDENTIAL" /></label>
         <div class="watermark-grid">
-          <label class="field-block">
-            <span data-i18n="fontSize">Font size</span>
-            <input id="watermarkSize" type="number" min="12" max="120" step="2" value="42" />
-          </label>
-          <label class="field-block">
-            <span data-i18n="opacity">Opacity</span>
-            <input id="watermarkOpacity" type="range" min="10" max="90" step="5" value="25" />
-          </label>
-          <label class="field-block">
-            <span data-i18n="angle">Angle</span>
-            <select id="watermarkAngle">
-              <option value="-45">-45°</option>
-              <option value="-30">-30°</option>
-              <option value="0">0°</option>
-              <option value="30">30°</option>
-              <option value="45">45°</option>
-            </select>
-          </label>
-          <label class="field-block">
-            <span data-i18n="watermarkPosition">Position</span>
-            <select id="watermarkPosition">
-              <option value="center" data-i18n="center">Center</option>
-              <option value="top-left" data-i18n="topLeft">Top left</option>
-              <option value="top-right" data-i18n="topRight">Top right</option>
-              <option value="bottom-left" data-i18n="bottomLeft">Bottom left</option>
-              <option value="bottom-right" data-i18n="bottomRight">Bottom right</option>
-            </select>
-          </label>
+          <label class="field-block"><span data-i18n="fontSize">Font size</span><input id="watermarkSize" type="number" min="12" max="120" step="2" value="42" /></label>
+          <label class="field-block"><span data-i18n="opacity">Opacity</span><input id="watermarkOpacity" type="range" min="10" max="90" step="5" value="25" /></label>
+          <label class="field-block"><span data-i18n="angle">Angle</span><select id="watermarkAngle"><option>-45</option><option>-30</option><option selected>0</option><option>30</option><option>45</option></select></label>
+          <label class="field-block"><span data-i18n="watermarkColor">Color</span><input id="watermarkColor" type="color" value="#555555" /></label>
         </div>
-
-        <div class="watermark-scope">
-          <span data-i18n="applyTo">Apply to</span>
-          <label><input type="radio" name="watermarkScope" value="current" checked> <span data-i18n="currentPage">Current page</span></label>
-          <label><input type="radio" name="watermarkScope" value="all"> <span data-i18n="allPages">All pages</span></label>
-        </div>
+        <label class="toggle-row"><input id="watermarkTile" type="checkbox"><span data-i18n="repeatWatermark">Repeat across page</span></label>
+        <div class="watermark-scope"><span data-i18n="applyTo">Apply to</span><label><input type="radio" name="watermarkScope" value="current" checked><span data-i18n="currentPage">Current page</span></label><label><input type="radio" name="watermarkScope" value="selected"><span data-i18n="selectedPages">Selected pages</span></label><label><input type="radio" name="watermarkScope" value="all"><span data-i18n="allPages">All pages</span></label></div>
+        <div class="watermark-live-preview" id="watermarkLivePreview">CONFIDENTIAL</div>
       </div>
-
-      <div class="modal-actions">
-        <button class="btn ghost" id="cancelWatermarkBtn" type="button" data-i18n="cancel">Cancel</button>
-        <button class="btn primary" id="applyWatermarkBtn" type="button" data-i18n="applyWatermark">Apply watermark</button>
-      </div>
+      <div class="modal-actions"><button class="btn ghost" data-close-modal type="button" data-i18n="cancel">Cancel</button><button class="btn primary" id="applyWatermarkBtn" type="button" data-i18n="applyWatermark">Apply watermark</button></div>
     </section>
 
-    <section class="modal-card" id="splitModal" aria-modal="true" role="dialog" hidden>
-      <div class="modal-head">
-        <div><span class="eyebrow" data-i18n="splitPdf">Split PDF</span><h3 data-i18n="splitTitle">Extract selected pages</h3></div>
-        <button class="modal-close" id="closeSplitBtn" type="button">×</button>
+    <section class="modal-card" id="splitModal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-head"><div><span class="eyebrow" data-i18n="splitPdf">Split PDF</span><h3 data-i18n="splitTitle">Extract selected pages</h3></div><button class="modal-close" data-close-modal type="button">×</button></div>
+      <div class="split-source">
+        <label><input type="radio" name="splitSource" value="selected" checked><span data-i18n="useSelectedPages">Use selected pages</span><b id="splitSelectedCount">0</b></label>
+        <label><input type="radio" name="splitSource" value="range"><span data-i18n="enterRange">Enter page range</span></label>
       </div>
-      <p class="modal-copy" data-i18n="splitNote">Enter page numbers or ranges, for example 1,3,5-8.</p>
-      <div class="split-form">
-        <label class="field-block">
-          <span data-i18n="pageRange">Pages to extract</span>
-          <input id="splitRange" type="text" inputmode="numeric" placeholder="1,3,5-8" />
-        </label>
-        <div class="split-summary" id="splitSummary">—</div>
+      <label class="field-block"><span data-i18n="pageRange">Page range</span><input id="splitRange" type="text" inputmode="numeric" placeholder="1,3,5-8" /></label>
+      <div class="quick-selects">
+        <button type="button" data-range="all" data-i18n="allPages">All pages</button>
+        <button type="button" data-range="odd" data-i18n="oddPages">Odd pages</button>
+        <button type="button" data-range="even" data-i18n="evenPages">Even pages</button>
+        <button type="button" data-range="current" data-i18n="currentPage">Current page</button>
       </div>
-      <div class="modal-actions">
-        <button class="btn ghost" id="cancelSplitBtn" type="button" data-i18n="cancel">Cancel</button>
-        <button class="btn primary" id="runSplitBtn" type="button" data-i18n="extractDownload">Extract & Download</button>
+      <div class="split-summary" id="splitSummary">—</div>
+      <div class="modal-actions"><button class="btn ghost" data-close-modal type="button" data-i18n="cancel">Cancel</button><button class="btn primary" id="runSplitBtn" type="button" data-i18n="extractDownload">Extract & Download</button></div>
+    </section>
+
+    <section class="modal-card" id="imageSettingsModal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-head"><div><span class="eyebrow" data-i18n="imagesToPdf">Images to PDF</span><h3 data-i18n="imageLayout">Page layout</h3></div><button class="modal-close" data-close-modal type="button">×</button></div>
+      <div class="settings-grid">
+        <label class="field-block"><span data-i18n="pageSize">Page size</span><select id="imagePageSize"><option value="original" data-i18n="originalSize">Original image size</option><option value="a4">A4</option><option value="letter">Letter</option></select></label>
+        <label class="field-block"><span data-i18n="orientation">Orientation</span><select id="imageOrientation"><option value="auto" data-i18n="auto">Auto</option><option value="portrait" data-i18n="portrait">Portrait</option><option value="landscape" data-i18n="landscape">Landscape</option></select></label>
+        <label class="field-block"><span data-i18n="margin">Margin</span><select id="imageMargin"><option value="0" data-i18n="none">None</option><option value="24" selected data-i18n="small">Small</option><option value="48" data-i18n="large">Large</option></select></label>
+        <label class="field-block"><span data-i18n="imageFit">Image fit</span><select id="imageFit"><option value="fit" data-i18n="fit">Fit</option><option value="fill" data-i18n="fill">Fill</option></select></label>
       </div>
+      <div class="modal-actions"><button class="btn ghost" data-close-modal type="button" data-i18n="cancel">Cancel</button><button class="btn primary" id="applyImageSettingsBtn" type="button" data-i18n="continue">Continue</button></div>
+    </section>
+
+    <section class="modal-card small-modal" id="pageNumberModal" role="dialog" aria-modal="true" hidden>
+      <div class="modal-head"><div><span class="eyebrow" data-i18n="pageNumbers">Page numbers</span><h3 data-i18n="addPageNumbers">Add page numbers</h3></div><button class="modal-close" data-close-modal type="button">×</button></div>
+      <div class="settings-grid">
+        <label class="field-block"><span data-i18n="pageNumberPosition">Position</span><select id="pageNumberPosition"><option value="bottom-center" data-i18n="bottomCenter">Bottom center</option><option value="bottom-right" data-i18n="bottomRight">Bottom right</option><option value="top-right" data-i18n="topRight">Top right</option></select></label>
+        <label class="field-block"><span data-i18n="startNumber">Start number</span><input id="pageNumberStart" type="number" value="1" min="1" /></label>
+      </div>
+      <div class="modal-actions"><button class="btn ghost" data-close-modal type="button" data-i18n="cancel">Cancel</button><button class="btn primary" id="applyPageNumbersBtn" type="button" data-i18n="apply">Apply</button></div>
+    </section>
+
+    <section class="progress-panel" id="progressPanel" hidden>
+      <div class="progress-copy"><strong id="progressTitle">Working…</strong><span id="progressText">0 / 0</span></div>
+      <div class="progress-track"><div id="progressBar"></div></div>
+      <button id="cancelProgressBtn" type="button" class="btn ghost compact" data-i18n="cancel">Cancel</button>
     </section>
 
     <div class="toast-stack" id="toastStack" aria-live="polite"></div>
@@ -341,8 +332,9 @@
   <input id="signInput" type="file" accept="application/pdf,.pdf" hidden />
   <input id="watermarkInput" type="file" accept="application/pdf,.pdf" hidden />
   <input id="splitInput" type="file" accept="application/pdf,.pdf" hidden />
+  <input id="pageNumberInput" type="file" accept="application/pdf,.pdf" hidden />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script type="module" src="app.js?v=20261008-4"></script>
+  <script type="module" src="app.js?v=20261008-5"></script>
 </body>
 </html>
