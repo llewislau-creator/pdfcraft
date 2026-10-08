@@ -64,7 +64,7 @@ const translations={
     exportError:'PDF 匯出失敗，請再試一次。',pageOf:(a,b)=>'第 '+a+' 頁，共 '+b+' 頁'
   }
 };
-let currentLang=localStorage.getItem('pdfcraft-lang')||'en';
+let currentLang='en'; try{currentLang=localStorage.getItem('pdfcraft-lang')||'en';}catch(e){}
 const t=(key,...args)=>{
   const value=translations[currentLang][key]??translations.en[key]??key;
   return typeof value==='function'?value(...args):value;
@@ -299,8 +299,7 @@ async function thumb(item,index){
 
 async function rebuild(rebuildThumbs=true){
   controls();
-applyLanguage();
-applyLanguage();
+  applyLanguage();
   if(rebuildThumbs){
     thumbs.innerHTML='';
     for(let i=0;i<pages.length;i++) await thumb(pages[i],i);
@@ -416,23 +415,26 @@ if(multiInput)multiInput.onchange=e=>openPdfFiles(e.target.files,false);
 if(imageInput)imageInput.onchange=e=>openImageFiles(e.target.files,pages.length===0);
 if(mixedInput)mixedInput.onchange=e=>openMixed(e.target.files,false);
 
-el('exportBtn').onclick=exportPdf;
-el('rotateLeft').onclick=()=>rotate(-90);
-el('rotateRight').onclick=()=>rotate(90);
-el('deletePage').onclick=del;
-el('moveUp').onclick=()=>move(-1);
-el('moveDown').onclick=()=>move(1);
+on('exportBtn',exportPdf);
+on('rotateLeft',()=>rotate(-90));
+on('rotateRight',()=>rotate(90));
+on('deletePage',del);
+on('moveUp',()=>move(-1));
+on('moveDown',()=>move(1));
 
 const drop=el('dropZone');
-['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{
-  e.preventDefault();
-  drop.classList.add('dragover');
-}));
-['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{
-  e.preventDefault();
-  drop.classList.remove('dragover');
-}));
-drop.addEventListener('drop',e=>openMixed(e.dataTransfer.files,pages.length===0));
+if(drop){
+  ['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{
+    e.preventDefault();
+    drop.classList.add('dragover');
+  }));
+  ['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{
+    e.preventDefault();
+    drop.classList.remove('dragover');
+  }));
+  drop.addEventListener('drop',e=>openMixed(e.dataTransfer.files,pages.length===0));
+}
 
 window.addEventListener('resize',()=>{if(pages.length)renderPage()});
 controls();
+applyLanguage();
