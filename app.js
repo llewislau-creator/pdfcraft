@@ -328,12 +328,16 @@ async function drawSignaturesOnCanvas(ctx,item,w,h){
 
 function openModal(id){
   const modal=el(id),backdrop=el('modalBackdrop');
-  if(backdrop)backdrop.classList.add('open');
-  if(modal)modal.classList.add('open');
+  if(backdrop){backdrop.hidden=false;backdrop.classList.add('open');}
+  if(modal){modal.hidden=false;modal.classList.add('open');}
 }
 function closeModals(){
-  ['compressModal','signModal'].forEach(id=>{const n=el(id);if(n)n.classList.remove('open');});
-  const backdrop=el('modalBackdrop');if(backdrop)backdrop.classList.remove('open');
+  ['compressModal','signModal'].forEach(id=>{
+    const n=el(id);
+    if(n){n.classList.remove('open');n.hidden=true;}
+  });
+  const backdrop=el('modalBackdrop');
+  if(backdrop){backdrop.classList.remove('open');backdrop.hidden=true;}
 }
 
 function openCompress(){
@@ -816,6 +820,7 @@ document.addEventListener('click',e=>{
 });
 
 window.addEventListener('resize',()=>{if(pages.length)renderPage();});
+closeModals();
 controls();
 applyLanguage();
 setupSignaturePad();
