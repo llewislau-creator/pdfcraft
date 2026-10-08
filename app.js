@@ -906,5 +906,35 @@ if(drop){
 window.addEventListener('resize',()=>{if(pages.length)renderPage();});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 
+
+async function openDesktopPdfPath(path){
+  const tauri=window.__TAURI__;
+  if(!tauri?.core?.invoke||!path)return;
+  try{
+    const bytes=await tauri.core.invoke('read_pdf_file',{path});
+    const name=String(path).split(/[\\/]/).pop()||'document.pdf';
+    const file=new File([new Uint8Array(bytes)],name,{type:'application/pdf'});
+    await openPdfFiles([file],true);
+  }catch(e){
+    console.error('Desktop PDF open error',e);
+    showToast(t('openError'),'error');
+  }
+}
+
+async function setupDesktopIntegration(){
+  const tauri=window.__TAURI__;
+  if(!tauri?.core?.invoke)return;
+  document.documentElement.classList.add('desktop-app');
+  try{
+    const unlisten=await tauri.event?.listen?.('open-pdf-path',event=>openDesktopPdfPath(event.payload));
+    window.addEventListener('beforeunload',()=>{try{unlisten?.();}catch(e){}},{once:true});
+  }catch(e){console.warn('Desktop event listener unavailable',e);}
+  try{
+    const startupPath=await tauri.core.invoke('startup_pdf_path');
+    if(startupPath)await openDesktopPdfPath(startupPath);
+  }catch(e){console.warn('No startup PDF path',e);}
+}
+
 setupSignaturePad();setupQuickSelects();setupWatermarkControls();setupModalClosers();
 controls();applyLanguage();
+setupDesktopIntegration();
