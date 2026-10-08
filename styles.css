@@ -1,3 +1,4 @@
+[hidden]{display:none!important}
 :root{
   --bg:#f7f7fa;
   --surface:#fff;
@@ -337,6 +338,7 @@ button.mini-tool{font:inherit;background:#fff;cursor:pointer}
 .mini-tool b{font-size:7px;font-weight:850;text-transform:uppercase;color:#2f7d55;background:#eaf7ef;padding:2px 5px;border-radius:999px}
 
 /* Modal system */
+.modal-backdrop[hidden],.modal-card[hidden]{display:none!important}
 .modal-backdrop{
   position:fixed;inset:0;z-index:120;background:rgba(20,20,28,.34);backdrop-filter:blur(5px);
   opacity:0;pointer-events:none;transition:.18s ease
