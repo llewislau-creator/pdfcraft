@@ -6,7 +6,7 @@
   <title>PDFCraft — Beautiful, private PDF editing</title>
   <meta name="description" content="Edit, merge, reorder, rotate and export PDFs privately in your browser." />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-  <link rel="stylesheet" href="styles.css?v=20261008-2" />
+  <link rel="stylesheet" href="styles.css?v=20261008-3" />
 </head>
 <body>
   <div class="app-shell" id="appShell">
@@ -79,6 +79,7 @@
               <button class="tool-btn" id="imagesBtn" type="button"><span>▧</span><span data-i18n="imagesToPdf">Images to PDF</span></button>
               <button class="tool-btn" id="compressBtn" type="button"><span>⇣</span><span data-i18n="compressPdf">Compress PDF</span></button>
               <button class="tool-btn" id="signBtn" type="button"><span>✓</span><span data-i18n="signPdf">Sign PDF</span></button>
+              <button class="tool-btn" id="watermarkBtn" type="button"><span>W</span><span data-i18n="watermarkPdf">Watermark</span></button>
             </div>
           </div>
 
@@ -153,6 +154,7 @@
               <div class="more-list">
                 <button class="mini-tool functional" id="homeCompressBtn" type="button"><span class="mini-tool-icon">⇣</span><span data-i18n="compressPdf">Compress PDF</span><b data-i18n="available">Available</b></button>
                 <button class="mini-tool functional" id="homeSignBtn" type="button"><span class="mini-tool-icon">✓</span><span data-i18n="signPdf">Sign PDF</span><b data-i18n="available">Available</b></button>
+                <button class="mini-tool functional" id="homeWatermarkBtn" type="button"><span class="mini-tool-icon">W</span><span data-i18n="watermarkPdf">Watermark PDF</span><b data-i18n="available">Available</b></button>
                 <div class="mini-tool"><span class="mini-tool-icon">✦</span><span data-i18n="aiAssistant">AI Assistant</span><em data-i18n="soon">Soon</em></div>
               </div>
             </section>
@@ -249,6 +251,63 @@
       </div>
     </section>
 
+    <section class="modal-card" id="watermarkModal" aria-modal="true" role="dialog" hidden>
+      <div class="modal-head">
+        <div><span class="eyebrow" data-i18n="watermarkPdf">Watermark PDF</span><h3 data-i18n="watermarkTitle">Add text watermark</h3></div>
+        <button class="modal-close" id="closeWatermarkBtn" type="button">×</button>
+      </div>
+      <p class="modal-copy" data-i18n="watermarkNote">Customize the watermark, then apply it to this page or every page.</p>
+
+      <div class="watermark-form">
+        <label class="field-block">
+          <span data-i18n="watermarkText">Watermark text</span>
+          <input id="watermarkText" type="text" maxlength="80" value="CONFIDENTIAL" />
+        </label>
+
+        <div class="watermark-grid">
+          <label class="field-block">
+            <span data-i18n="fontSize">Font size</span>
+            <input id="watermarkSize" type="number" min="12" max="120" step="2" value="42" />
+          </label>
+          <label class="field-block">
+            <span data-i18n="opacity">Opacity</span>
+            <input id="watermarkOpacity" type="range" min="10" max="90" step="5" value="25" />
+          </label>
+          <label class="field-block">
+            <span data-i18n="angle">Angle</span>
+            <select id="watermarkAngle">
+              <option value="-45">-45°</option>
+              <option value="-30">-30°</option>
+              <option value="0">0°</option>
+              <option value="30">30°</option>
+              <option value="45">45°</option>
+            </select>
+          </label>
+          <label class="field-block">
+            <span data-i18n="watermarkPosition">Position</span>
+            <select id="watermarkPosition">
+              <option value="center" data-i18n="center">Center</option>
+              <option value="top-left" data-i18n="topLeft">Top left</option>
+              <option value="top-right" data-i18n="topRight">Top right</option>
+              <option value="bottom-left" data-i18n="bottomLeft">Bottom left</option>
+              <option value="bottom-right" data-i18n="bottomRight">Bottom right</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="watermark-scope">
+          <span data-i18n="applyTo">Apply to</span>
+          <label><input type="radio" name="watermarkScope" value="current" checked> <span data-i18n="currentPage">Current page</span></label>
+          <label><input type="radio" name="watermarkScope" value="all"> <span data-i18n="allPages">All pages</span></label>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="cancelWatermarkBtn" type="button" data-i18n="cancel">Cancel</button>
+        <button class="btn primary" id="applyWatermarkBtn" type="button" data-i18n="applyWatermark">Apply watermark</button>
+      </div>
+    </section>
+
     <div class="toast-stack" id="toastStack" aria-live="polite"></div>
     <div id="status" class="sr-only" aria-live="polite">Ready</div>
   </div>
@@ -259,8 +318,9 @@
   <input id="mixedInput" type="file" accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png" multiple hidden />
   <input id="compressInput" type="file" accept="application/pdf,.pdf" hidden />
   <input id="signInput" type="file" accept="application/pdf,.pdf" hidden />
+  <input id="watermarkInput" type="file" accept="application/pdf,.pdf" hidden />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script type="module" src="app.js?v=20261008-2"></script>
+  <script type="module" src="app.js?v=20261008-3"></script>
 </body>
 </html>
