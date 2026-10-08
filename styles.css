@@ -412,3 +412,11 @@ button.mini-tool{font:inherit;background:#fff;cursor:pointer}
   .watermark-grid{grid-template-columns:1fr}
   .watermark-scope{align-items:flex-start;flex-direction:column;gap:8px}
 }
+
+
+/* Split PDF */
+.split-form{display:grid;gap:10px}
+.split-summary{
+  min-height:36px;display:flex;align-items:center;padding:9px 11px;border:1px solid var(--line);
+  border-radius:10px;background:#fafafd;color:#666672;font-size:10.5px
+}
