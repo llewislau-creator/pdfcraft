@@ -91,6 +91,9 @@ button:focus-visible{outline:3px solid rgba(124,58,237,.22);outline-offset:2px}
   font-size:12px;font-weight:650
 }
 .tool-btn:hover:not(:disabled){background:#f5f6fa}
+.nav-group{background:#f7f5ff;border:1px solid #ebe6ff;border-radius:12px;padding:3px}
+.nav-tool{background:#fff;border-color:#ebe8f3;box-shadow:0 1px 2px rgba(20,24,40,.03)}
+.nav-tool:hover:not(:disabled){background:#f3efff;border-color:#ddd3ff;color:#6540cf}
 .tool-btn span{font-size:14px;margin-right:3px}
 .tool-btn.danger{color:#d83b43}
 .tool-btn.danger:hover:not(:disabled){background:#fff1f2}
