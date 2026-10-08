@@ -872,8 +872,8 @@ on('openBtn',()=>mixedInput?.click());on('addBtn',()=>mixedInput?.click());on('t
 on('exportBtn',exportPdf);on('exportToolbarBtn',exportPdf);on('mobileDownloadBtn',exportPdf);
 on('propRotateBtn',()=>rotateSelected(90));on('propDuplicateBtn',duplicateSelected);on('propExportBtn',exportSelectedPage);on('propDeleteBtn',deleteSelected);
 on('mobilePagesBtn',openMobileDrawer);on('mobilePagesBarBtn',openMobileDrawer);on('closeDrawerBtn',closeMobileDrawer);on('mobileDrawerBackdrop',()=>{closeMobileDrawer();closeTools();});
-on('chooseBtn',()=>fileInput?.click());on('toolEditCard',()=>fileInput?.click());on('chooseMultiBtn',()=>multiInput?.click());on('toolMergeCard',()=>multiInput?.click());
-on('chooseImagesBtn',()=>imageInput?.click());on('toolImageCard',()=>imageInput?.click());on('imagesBtn',()=>imageInput?.click());
+on('chooseBtn',()=>fileInput?.click());on('toolEditCard',()=>fileInput?.click());on('toolMergeCard',()=>multiInput?.click());
+on('toolImageCard',()=>imageInput?.click());on('imagesBtn',()=>imageInput?.click());
 on('mergeBtn',()=>multiInput?.click());on('compressBtn',openCompress);on('homeCompressBtn',openCompress);on('signBtn',openSign);on('homeSignBtn',openSign);
 on('watermarkBtn',openWatermark);on('homeWatermarkBtn',openWatermark);on('splitBtn',openSplit);on('toolSplitCard',openSplit);
 on('pageNumberBtn',openPageNumbers);on('homePageNumberBtn',openPageNumbers);
