@@ -24,6 +24,7 @@
       <nav class="top-actions" aria-label="Primary actions">
         <button class="btn ghost" id="openBtn">Open PDF</button>
         <button class="btn soft" id="mergeBtn">Merge PDFs</button>
+        <button class="btn soft" id="imagesBtn">Images to PDF</button>
         <button class="btn primary" id="exportBtn" disabled>Download PDF</button>
       </nav>
     </header>
@@ -38,7 +39,7 @@
               <span class="count-pill" id="pageCount">0</span>
             </div>
           </div>
-          <button class="icon-btn" id="addBtn" title="Add PDF" aria-label="Add PDF">＋</button>
+          <button class="icon-btn" id="addBtn" title="Add PDF or image" aria-label="Add PDF or image">＋</button>
         </div>
         <div id="thumbs" class="thumbs"></div>
 
@@ -86,11 +87,12 @@
                 <div class="hero-icon">PDF</div>
               </div>
               <h1>Edit PDFs beautifully.<br><span>Right in your browser.</span></h1>
-              <p class="hero-copy">Merge, reorder, rotate and export PDF files with a clean editor that keeps your documents on your device.</p>
+              <p class="hero-copy">Merge, reorder, rotate and export PDF files — or turn JPG and PNG images into one PDF — while keeping everything on your device.</p>
 
               <div class="empty-actions">
                 <button class="btn primary hero-primary" id="chooseBtn">Choose a PDF</button>
                 <button class="btn soft hero-secondary" id="chooseMultiBtn">Merge PDFs</button>
+                <button class="btn soft hero-secondary" id="chooseImagesBtn">JPG / PNG to PDF</button>
               </div>
 
               <div class="trust-row">
@@ -118,6 +120,11 @@
                 <button class="tool-card" id="toolMergeCard" type="button">
                   <div class="tool-card-icon merge">⌘</div>
                   <div><strong>Merge PDF</strong><span>Combine multiple PDF files</span></div>
+                </button>
+
+                <button class="tool-card" id="toolImageCard" type="button">
+                  <div class="tool-card-icon sign">▧</div>
+                  <div><strong>Images to PDF</strong><span>Combine JPG & PNG into one PDF</span></div>
                 </button>
 
                 <div class="tool-card muted-card">
@@ -169,16 +176,10 @@
 
   <input id="fileInput" type="file" accept="application/pdf,.pdf" hidden />
   <input id="multiInput" type="file" accept="application/pdf,.pdf" multiple hidden />
+  <input id="imageInput" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple hidden />
+  <input id="mixedInput" type="file" accept="application/pdf,image/jpeg,image/png,.pdf,.jpg,.jpeg,.png" multiple hidden />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script type="module">
-    import './app.js';
-    const edit = document.getElementById('toolEditCard');
-    const merge = document.getElementById('toolMergeCard');
-    const choose = document.getElementById('chooseBtn');
-    const chooseMulti = document.getElementById('chooseMultiBtn');
-    if (edit && choose) edit.addEventListener('click', () => choose.click());
-    if (merge && chooseMulti) merge.addEventListener('click', () => chooseMulti.click());
-  </script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
