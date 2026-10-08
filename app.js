@@ -351,10 +351,13 @@ async function openMixed(files,replace=false,layout=null){
   if(!list.length)return;
   if(!list.every(largeFileOkay))return;
   const old={src:sourceDocs.length,img:imageSources.length,page:pages.length};
+  const appended=!replace&&pages.length>0;
+  if(appended)checkpoint();
   if(replace)resetDoc();
   showProgress(t('loadingFiles'),list.length);
   try{
     for(let i=0;i<list.length;i++){
+      if(abortRequested)throw new Error('ABORT');
       const file=list[i];
       if(isPdf(file))await loadPdf(await file.arrayBuffer());
       else await loadImageFile(file,layout||defaultImageLayout());
@@ -363,14 +366,16 @@ async function openMixed(files,replace=false,layout=null){
     selected=Math.min(selected,Math.max(0,pages.length-1));
     selectedIds=new Set(pages[selected]?[pages[selected].id]:[]);
     await rebuild();
-    if(replace)markLoaded();else{dirty=true;history=[];future=[];}
+    if(replace)markLoaded();else dirty=true;
     showToast(list.every(isImage)?t('imagesAdded',list.length):t('filesAdded',list.length));
   }catch(e){
     console.error('Open error',e);
     if(!replace){
       sourceDocs.splice(old.src);imageSources.splice(old.img);pages.splice(old.page);
+      if(appended)history.pop();
     }
-    showToast(friendlyOpenError(e),'error');
+    if(String(e?.message)==='ABORT')showToast(t('cancelled'),'info');
+    else showToast(friendlyOpenError(e),'error');
     if(replace)resetDoc();
     await rebuild();
   }finally{hideProgress();}
@@ -675,8 +680,14 @@ function deleteSelected(){
 function goPage(d){const to=selected+d;if(to<0||to>=pages.length)return;selected=to;selectedIds=new Set([pages[selected].id]);selectionAnchor=selected;rebuild(false);}
 function bulkExport(){exportIndices(getSelectedIndices(),'pdfcraft-selected-pages.pdf',t('selectedDownloaded'));}
 
-function openTools(){const d=el('toolsDrawer');if(d){d.classList.add('open');d.setAttribute('aria-hidden','false');}}
-function closeTools(){const d=el('toolsDrawer');if(d){d.classList.remove('open');d.setAttribute('aria-hidden','true');}}
+function openTools(){
+  const d=el('toolsDrawer');if(d){d.classList.add('open');d.setAttribute('aria-hidden','false');}
+  if(window.innerWidth<=900)el('mobileDrawerBackdrop')?.classList.add('open');
+}
+function closeTools(){
+  const d=el('toolsDrawer');if(d){d.classList.remove('open');d.setAttribute('aria-hidden','true');}
+  if(!el('mobilePagesDrawer')?.classList.contains('open'))el('mobileDrawerBackdrop')?.classList.remove('open');
+}
 function openMobileDrawer(){el('mobilePagesDrawer')?.classList.add('open');el('mobileDrawerBackdrop')?.classList.add('open');}
 function closeMobileDrawer(){el('mobilePagesDrawer')?.classList.remove('open');el('mobileDrawerBackdrop')?.classList.remove('open');}
 
@@ -797,7 +808,7 @@ async function applyPageNumbers(){
 async function addOverlaysToPdfPage(out,page,item){
   const {width,height}=page.getSize();
   for(const mark of item.watermarks||[]){
-    const oc=document.createElement('canvas');const scale=1.5;oc.width=Math.max(2,Math.round(width*scale));oc.height=Math.max(2,Math.round(height*scale));const x=oc.getContext('2d');drawWatermarkMark(x,{...mark,size:(mark.size||42)*scale},oc.width,oc.height);
+    const oc=document.createElement('canvas');const scale=1.5;oc.width=Math.max(2,Math.round(width*scale));oc.height=Math.max(2,Math.round(height*scale));const x=oc.getContext('2d');drawWatermarkMark(x,mark,oc.width,oc.height);
     const png=await out.embedPng(dataUrlToBytes(oc.toDataURL('image/png')));page.drawImage(png,{x:0,y:0,width,height});
   }
   for(const sig of item.signatures||[]){
@@ -852,7 +863,7 @@ on('duplicatePage',duplicateSelected);on('deletePage',deleteSelected);on('bulkRo
 on('openBtn',()=>mixedInput?.click());on('addBtn',()=>mixedInput?.click());on('toolsBtn',openTools);on('mobileToolsBtn',openTools);on('closeToolsBtn',closeTools);
 on('exportBtn',exportPdf);on('exportToolbarBtn',exportPdf);on('mobileDownloadBtn',exportPdf);
 on('propRotateBtn',()=>rotateSelected(90));on('propDuplicateBtn',duplicateSelected);on('propExportBtn',exportSelectedPage);on('propDeleteBtn',deleteSelected);
-on('mobilePagesBtn',openMobileDrawer);on('mobilePagesBarBtn',openMobileDrawer);on('closeDrawerBtn',closeMobileDrawer);on('mobileDrawerBackdrop',closeMobileDrawer);
+on('mobilePagesBtn',openMobileDrawer);on('mobilePagesBarBtn',openMobileDrawer);on('closeDrawerBtn',closeMobileDrawer);on('mobileDrawerBackdrop',()=>{closeMobileDrawer();closeTools();});
 on('chooseBtn',()=>fileInput?.click());on('toolEditCard',()=>fileInput?.click());on('chooseMultiBtn',()=>multiInput?.click());on('toolMergeCard',()=>multiInput?.click());
 on('chooseImagesBtn',()=>imageInput?.click());on('toolImageCard',()=>imageInput?.click());on('imagesBtn',()=>imageInput?.click());
 on('mergeBtn',()=>multiInput?.click());on('compressBtn',openCompress);on('homeCompressBtn',openCompress);on('signBtn',openSign);on('homeSignBtn',openSign);
