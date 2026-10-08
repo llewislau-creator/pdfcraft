@@ -94,14 +94,15 @@ const setStatus=m=>el('status').textContent=m;
 
 function controls(){
   const h=pages.length>0;
-  ['exportBtn','rotateLeft','rotateRight','deletePage','moveUp','moveDown'].forEach(id=>el(id).disabled=!h);
-  el('prevBtn').disabled=!h||selected===0;
-  el('nextBtn').disabled=!h||selected===pages.length-1;
-  el('moveUp').disabled=!h||selected===0;
-  el('moveDown').disabled=!h||selected===pages.length-1;
-  el('pageCount').textContent=pages.length;
-  el('emptyState').classList.toggle('hidden',h);
-  el('viewerWrap').classList.toggle('hidden',!h);
+  const setDisabled=(id,value)=>{const node=el(id);if(node)node.disabled=value;};
+  ['exportBtn','rotateLeft','rotateRight','deletePage','moveUp','moveDown'].forEach(id=>setDisabled(id,!h));
+  setDisabled('prevBtn',!h||selected===0);
+  setDisabled('nextBtn',!h||selected===pages.length-1);
+  setDisabled('moveUp',!h||selected===0);
+  setDisabled('moveDown',!h||selected===pages.length-1);
+  const pageCount=el('pageCount'); if(pageCount) pageCount.textContent=pages.length;
+  const emptyState=el('emptyState'); if(emptyState) emptyState.classList.toggle('hidden',h);
+  const viewerWrap=el('viewerWrap'); if(viewerWrap) viewerWrap.classList.toggle('hidden',!h);
 }
 
 function resetDoc(){
@@ -127,16 +128,23 @@ async function loadImageFile(file){
   const bytes=new Uint8Array(await file.arrayBuffer());
   const mime=file.type==='image/png'||file.name.toLowerCase().endsWith('.png')?'image/png':'image/jpeg';
   const blob=new Blob([bytes],{type:mime});
-  const bitmap=await createImageBitmap(blob);
+  let bitmap;
+  if('createImageBitmap' in window){
+    try{ bitmap=await createImageBitmap(blob); }catch(e){ console.warn('createImageBitmap failed, using Image fallback',e); }
+  }
+  if(!bitmap){
+    bitmap=await new Promise((resolve,reject)=>{
+      const url=URL.createObjectURL(blob);
+      const img=new Image();
+      img.onload=()=>{URL.revokeObjectURL(url);resolve(img);};
+      img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Image decode failed'));};
+      img.src=url;
+    });
+  }
+  const width=bitmap.naturalWidth||bitmap.width;
+  const height=bitmap.naturalHeight||bitmap.height;
   const imageIndex=imageSources.length;
-  imageSources.push({
-    bytes,
-    mime,
-    bitmap,
-    width:bitmap.width,
-    height:bitmap.height,
-    name:file.name
-  });
+  imageSources.push({bytes,mime,bitmap,width,height,name:file.name});
   pages.push({type:'image',imageIndex,rotation:0,id:uid()});
 }
 
@@ -292,6 +300,7 @@ async function thumb(item,index){
 async function rebuild(rebuildThumbs=true){
   controls();
 applyLanguage();
+applyLanguage();
   if(rebuildThumbs){
     thumbs.innerHTML='';
     for(let i=0;i<pages.length;i++) await thumb(pages[i],i);
@@ -386,25 +395,26 @@ function goHome(){
   applyLanguage();
 }
 
-el('openBtn').onclick=()=>fileInput.click();
-el('chooseBtn').onclick=()=>fileInput.click();
-el('mergeBtn').onclick=()=>multiInput.click();
-el('chooseMultiBtn').onclick=()=>multiInput.click();
-el('imagesBtn').onclick=()=>imageInput.click();
-el('chooseImagesBtn').onclick=()=>imageInput.click();
-el('toolEditCard').onclick=()=>fileInput.click();
-el('toolMergeCard').onclick=()=>multiInput.click();
-el('toolImageCard').onclick=()=>imageInput.click();
-el('addBtn').onclick=()=>mixedInput.click();
-el('homeBtn').onclick=goHome;
-el('prevBtn').onclick=()=>goPage(-1);
-el('nextBtn').onclick=()=>goPage(1);
-el('langBtn').onclick=()=>{currentLang=currentLang==='en'?'zh':'en';localStorage.setItem('pdfcraft-lang',currentLang);applyLanguage();};
+const on=(id,handler)=>{const node=el(id);if(node)node.onclick=handler;};
+on('openBtn',()=>fileInput&&fileInput.click());
+on('chooseBtn',()=>fileInput&&fileInput.click());
+on('mergeBtn',()=>multiInput&&multiInput.click());
+on('chooseMultiBtn',()=>multiInput&&multiInput.click());
+on('imagesBtn',()=>imageInput&&imageInput.click());
+on('chooseImagesBtn',()=>imageInput&&imageInput.click());
+on('toolEditCard',()=>fileInput&&fileInput.click());
+on('toolMergeCard',()=>multiInput&&multiInput.click());
+on('toolImageCard',()=>imageInput&&imageInput.click());
+on('addBtn',()=>mixedInput&&mixedInput.click());
+on('homeBtn',goHome);
+on('prevBtn',()=>goPage(-1));
+on('nextBtn',()=>goPage(1));
+on('langBtn',()=>{currentLang=currentLang==='en'?'zh':'en';try{localStorage.setItem('pdfcraft-lang',currentLang);}catch(e){}applyLanguage();});
 
-fileInput.onchange=e=>openPdfFiles(e.target.files,true);
-multiInput.onchange=e=>openPdfFiles(e.target.files,false);
-imageInput.onchange=e=>openImageFiles(e.target.files,pages.length===0);
-mixedInput.onchange=e=>openMixed(e.target.files,false);
+if(fileInput)fileInput.onchange=e=>openPdfFiles(e.target.files,true);
+if(multiInput)multiInput.onchange=e=>openPdfFiles(e.target.files,false);
+if(imageInput)imageInput.onchange=e=>openImageFiles(e.target.files,pages.length===0);
+if(mixedInput)mixedInput.onchange=e=>openMixed(e.target.files,false);
 
 el('exportBtn').onclick=exportPdf;
 el('rotateLeft').onclick=()=>rotate(-90);
