@@ -6,7 +6,7 @@
   <title>PDFCraft — Beautiful, private PDF editing</title>
   <meta name="description" content="Edit, merge, reorder, rotate and export PDFs privately in your browser." />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20261008-2" />
 </head>
 <body>
   <div class="app-shell" id="appShell">
@@ -196,9 +196,9 @@
       <div id="mobileThumbs" class="mobile-thumbs"></div>
     </div>
 
-    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-backdrop" id="modalBackdrop" hidden></div>
 
-    <section class="modal-card" id="compressModal" aria-modal="true" role="dialog">
+    <section class="modal-card" id="compressModal" aria-modal="true" role="dialog" hidden>
       <div class="modal-head">
         <div><span class="eyebrow" data-i18n="compressPdf">Compress PDF</span><h3 data-i18n="compressTitle">Choose compression level</h3></div>
         <button class="modal-close" id="closeCompressBtn" type="button">×</button>
@@ -224,7 +224,7 @@
       </div>
     </section>
 
-    <section class="modal-card" id="signModal" aria-modal="true" role="dialog">
+    <section class="modal-card" id="signModal" aria-modal="true" role="dialog" hidden>
       <div class="modal-head">
         <div><span class="eyebrow" data-i18n="signPdf">Sign PDF</span><h3 data-i18n="signatureTitle">Draw your signature</h3></div>
         <button class="modal-close" id="closeSignBtn" type="button">×</button>
@@ -261,6 +261,6 @@
   <input id="signInput" type="file" accept="application/pdf,.pdf" hidden />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=20261008-2"></script>
 </body>
 </html>
