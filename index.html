@@ -6,7 +6,7 @@
   <title>PDFCraft — Your private PDF workspace</title>
   <meta name="description" content="Edit, merge, sign, watermark, split, compress and export PDFs privately in your browser." />
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-  <link rel="stylesheet" href="styles.css?v=20261008-5" />
+  <link rel="stylesheet" href="styles.css?v=20261008-6" />
 </head>
 <body>
   <svg class="svg-sprite" aria-hidden="true">
@@ -118,11 +118,6 @@
               <p class="hero-copy" data-i18n="heroCopy">Edit, merge, sign and export PDFs while your files stay on your device.</p>
               <button class="btn primary hero-main" id="chooseBtn" type="button"><span data-i18n="openPdf">Open PDF</span><span>→</span></button>
               <p class="drop-copy" data-i18n="dropCopy">or drag PDF, JPG and PNG files here</p>
-              <div class="hero-secondary-row">
-                <button class="text-action" id="chooseMultiBtn" type="button"><svg><use href="#i-merge"/></svg><span data-i18n="mergePdfs">Merge PDFs</span></button>
-                <span></span>
-                <button class="text-action" id="chooseImagesBtn" type="button"><svg><use href="#i-image"/></svg><span data-i18n="imagesToPdf">Images to PDF</span></button>
-              </div>
               <div class="trust-row">
                 <span data-i18n="noAccount">✓ No account</span>
                 <span data-i18n="noUploads">✓ Files stay on your device</span>
@@ -130,38 +125,63 @@
               </div>
             </section>
 
-            <section class="tool-section">
+            <section class="tool-section unified-tools">
               <div class="section-heading">
-                <div><span class="eyebrow" data-i18n="popularTools">POPULAR TOOLS</span><h2 data-i18n="everything">Everything you need for everyday PDFs</h2></div>
+                <div>
+                  <span class="eyebrow" data-i18n="allTools">ALL TOOLS</span>
+                  <h2 data-i18n="everything">Everything you need for everyday PDFs</h2>
+                </div>
                 <span class="section-note" data-i18n="fastPrivate">Fast · simple · private</span>
               </div>
-              <div class="tool-grid">
-                <button class="tool-card featured" id="toolEditCard" type="button">
+
+              <div class="tool-grid tool-grid-eight">
+                <button class="tool-card" id="toolEditCard" type="button">
                   <div class="tool-card-icon edit"><svg><use href="#i-pages"/></svg></div>
-                  <div><strong data-i18n="editPdf">Edit PDF</strong><span data-i18n="editPdfDesc">Reorder, rotate and remove pages</span></div><span class="card-arrow">→</span>
+                  <div><strong data-i18n="editPdf">Edit PDF</strong><span data-i18n="editPdfDesc">Reorder, rotate and remove pages</span></div>
+                  <span class="card-arrow">→</span>
                 </button>
-                <button class="tool-card" id="homeCompressBtn" type="button">
-                  <div class="tool-card-icon compress"><svg><use href="#i-compress"/></svg></div>
-                  <div><strong data-i18n="compressPdf">Compress PDF</strong><span data-i18n="compressPdfDesc">Reduce file size with quality control</span></div><span class="card-arrow">→</span>
-                </button>
+
                 <button class="tool-card" id="toolMergeCard" type="button">
                   <div class="tool-card-icon merge"><svg><use href="#i-merge"/></svg></div>
-                  <div><strong data-i18n="mergePdf">Merge PDF</strong><span data-i18n="mergePdfDesc">Combine multiple PDF files</span></div><span class="card-arrow">→</span>
+                  <div><strong data-i18n="mergePdf">Merge PDF</strong><span data-i18n="mergePdfDesc">Combine multiple PDF files</span></div>
+                  <span class="card-arrow">→</span>
                 </button>
+
+                <button class="tool-card" id="toolSplitCard" type="button">
+                  <div class="tool-card-icon split"><svg><use href="#i-split"/></svg></div>
+                  <div><strong data-i18n="splitPdf">Split PDF</strong><span data-i18n="splitPdfDesc">Extract selected pages</span></div>
+                  <span class="card-arrow">→</span>
+                </button>
+
+                <button class="tool-card" id="homeCompressBtn" type="button">
+                  <div class="tool-card-icon compress"><svg><use href="#i-compress"/></svg></div>
+                  <div><strong data-i18n="compressPdf">Compress PDF</strong><span data-i18n="compressPdfDesc">Reduce file size with quality control</span></div>
+                  <span class="card-arrow">→</span>
+                </button>
+
                 <button class="tool-card" id="toolImageCard" type="button">
                   <div class="tool-card-icon image"><svg><use href="#i-image"/></svg></div>
-                  <div><strong data-i18n="imagesToPdf">Images to PDF</strong><span data-i18n="imagesToPdfDesc">Turn JPG and PNG into a polished PDF</span></div><span class="card-arrow">→</span>
+                  <div><strong data-i18n="imagesToPdf">Images to PDF</strong><span data-i18n="imagesToPdfDesc">Turn JPG and PNG into a polished PDF</span></div>
+                  <span class="card-arrow">→</span>
                 </button>
-              </div>
-            </section>
 
-            <section class="all-tools">
-              <div class="section-heading compact-heading"><div><span class="eyebrow" data-i18n="allTools">ALL TOOLS</span><h2 data-i18n="moreTools">More PDF workflows</h2></div></div>
-              <div class="mini-tools-grid">
-                <button class="mini-tool" id="toolSplitCard" type="button"><svg><use href="#i-split"/></svg><span data-i18n="splitPdf">Split PDF</span></button>
-                <button class="mini-tool" id="homeSignBtn" type="button"><svg><use href="#i-sign"/></svg><span data-i18n="signPdf">Sign PDF</span></button>
-                <button class="mini-tool" id="homeWatermarkBtn" type="button"><svg><use href="#i-watermark"/></svg><span data-i18n="watermarkPdf">Watermark PDF</span></button>
-                <button class="mini-tool" id="homePageNumberBtn" type="button"><svg><use href="#i-number"/></svg><span data-i18n="pageNumbers">Page numbers</span></button>
+                <button class="tool-card" id="homeSignBtn" type="button">
+                  <div class="tool-card-icon sign"><svg><use href="#i-sign"/></svg></div>
+                  <div><strong data-i18n="signPdf">Sign PDF</strong><span data-i18n="signPdfDesc">Draw and place a signature</span></div>
+                  <span class="card-arrow">→</span>
+                </button>
+
+                <button class="tool-card" id="homeWatermarkBtn" type="button">
+                  <div class="tool-card-icon watermark"><svg><use href="#i-watermark"/></svg></div>
+                  <div><strong data-i18n="watermarkPdf">Watermark PDF</strong><span data-i18n="watermarkPdfDesc">Add a customizable text watermark</span></div>
+                  <span class="card-arrow">→</span>
+                </button>
+
+                <button class="tool-card" id="homePageNumberBtn" type="button">
+                  <div class="tool-card-icon number"><svg><use href="#i-number"/></svg></div>
+                  <div><strong data-i18n="pageNumbers">Page numbers</strong><span data-i18n="pageNumbersDesc">Add page numbers to every page</span></div>
+                  <span class="card-arrow">→</span>
+                </button>
               </div>
             </section>
           </div>
@@ -336,6 +356,6 @@
   <input id="pageNumberInput" type="file" accept="application/pdf,.pdf" hidden />
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script type="module" src="app.js?v=20261008-5"></script>
+  <script type="module" src="app.js?v=20261008-6"></script>
 </body>
 </html>
