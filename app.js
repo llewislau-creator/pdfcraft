@@ -10,6 +10,7 @@ const mixedInput=el('mixedInput');
 const compressInput=el('compressInput');
 const signInput=el('signInput');
 const watermarkInput=el('watermarkInput');
+const splitInput=el('splitInput');
 const thumbs=el('thumbs');
 const mobileThumbs=el('mobileThumbs');
 const canvas=el('pdfCanvas');
@@ -38,6 +39,7 @@ const translations={
     compressDownload:'Compress & Download',compressing:'Compressing PDF…',compressed:'Compressed PDF downloaded',
     signatureTitle:'Draw your signature',signatureNote:'Draw below, then add the signature to the selected page.',signaturePosition:'Position',bottomRight:'Bottom right',bottomLeft:'Bottom left',center:'Center',clear:'Clear',cancel:'Cancel',addSignature:'Add signature',signatureAdded:'Signature added',drawSignatureFirst:'Draw a signature first.',
     watermarkPdf:'Watermark PDF',watermarkTitle:'Add text watermark',watermarkNote:'Customize the watermark, then apply it to this page or every page.',watermarkText:'Watermark text',fontSize:'Font size',opacity:'Opacity',angle:'Angle',watermarkPosition:'Position',topLeft:'Top left',topRight:'Top right',applyTo:'Apply to',currentPage:'Current page',allPages:'All pages',applyWatermark:'Apply watermark',watermarkAdded:'Watermark applied',watermarkEmpty:'Enter watermark text.',
+    splitTitle:'Extract selected pages',splitNote:'Enter page numbers or ranges, for example 1,3,5-8.',pageRange:'Pages to extract',extractDownload:'Extract & Download',splitDownloaded:'Extracted PDF downloaded',splitInvalid:'Enter a valid page range.',splitOutOfRange:'One or more page numbers are outside this document.',selectedPages:n=>n+' page(s) selected',
     viewerHint:'Drag thumbnails to reorder pages',
     selectedPage:'SELECTED PAGE',properties:'Properties',pageSize:'Page size',rotation:'Rotation',position:'Position',
     privateLocal:'Private by default',privateLocalDesc:'Your files never leave this device.',
@@ -73,6 +75,7 @@ const translations={
     compressDownload:'壓縮並下載',compressing:'正在壓縮 PDF…',compressed:'壓縮 PDF 已下載',
     signatureTitle:'繪製你的簽名',signatureNote:'在下方手寫簽名，然後加入目前選取的頁面。',signaturePosition:'位置',bottomRight:'右下角',bottomLeft:'左下角',center:'中央',clear:'清除',cancel:'取消',addSignature:'加入簽名',signatureAdded:'簽名已加入',drawSignatureFirst:'請先畫上簽名。',
     watermarkPdf:'PDF 加水印',watermarkTitle:'加入文字水印',watermarkNote:'設定水印後，可套用到目前頁面或全部頁面。',watermarkText:'水印文字',fontSize:'字體大小',opacity:'透明度',angle:'旋轉角度',watermarkPosition:'位置',topLeft:'左上角',topRight:'右上角',applyTo:'套用到',currentPage:'目前頁面',allPages:'全部頁面',applyWatermark:'套用水印',watermarkAdded:'水印已套用',watermarkEmpty:'請輸入水印文字。',
+    splitTitle:'擷取指定頁面',splitNote:'輸入頁碼或範圍，例如 1,3,5-8。',pageRange:'要擷取的頁面',extractDownload:'擷取並下載',splitDownloaded:'分割 PDF 已下載',splitInvalid:'請輸入有效的頁碼範圍。',splitOutOfRange:'其中一個頁碼超出文件頁數。',selectedPages:n=>'已選擇 '+n+' 頁',
     viewerHint:'拖曳縮圖即可重新排序頁面',
     selectedPage:'已選頁面',properties:'屬性',pageSize:'頁面尺寸',rotation:'旋轉',position:'位置',
     privateLocal:'預設私密',privateLocalDesc:'你的檔案不會離開這部裝置。',
@@ -396,6 +399,67 @@ async function drawWatermarksOnPdfPage(out,page,item){
   }
 }
 
+
+function parsePageRange(value,total){
+  const text=(value||'').trim();
+  if(!text)return {error:'invalid'};
+  const result=[];
+  const seen=new Set();
+  for(const raw of text.split(',')){
+    const part=raw.trim();
+    if(!part)return {error:'invalid'};
+    if(/^\d+$/.test(part)){
+      const n=Number(part);
+      if(n<1||n>total)return {error:'range'};
+      if(!seen.has(n)){seen.add(n);result.push(n-1);}
+      continue;
+    }
+    const m=part.match(/^(\d+)\s*-\s*(\d+)$/);
+    if(!m)return {error:'invalid'};
+    let a=Number(m[1]),b=Number(m[2]);
+    if(a<1||b<1||a>total||b>total)return {error:'range'};
+    const step=a<=b?1:-1;
+    for(let n=a;;n+=step){
+      if(!seen.has(n)){seen.add(n);result.push(n-1);}
+      if(n===b)break;
+    }
+  }
+  return {pages:result};
+}
+
+function updateSplitSummary(){
+  const node=el('splitSummary');
+  if(!node)return;
+  const parsed=parsePageRange(el('splitRange')?.value||'',pages.length);
+  if(parsed.pages)node.textContent=t('selectedPages',parsed.pages.length);
+  else node.textContent='—';
+}
+
+function openSplit(){
+  if(!pages.length){if(splitInput)splitInput.click();return;}
+  const range=el('splitRange');
+  if(range&&!range.value)range.value='1';
+  updateSplitSummary();
+  openModal('splitModal');
+}
+
+async function runSplit(){
+  if(!pages.length)return;
+  const parsed=parsePageRange(el('splitRange')?.value||'',pages.length);
+  if(parsed.error==='invalid'){showToast(t('splitInvalid'),'error');return;}
+  if(parsed.error==='range'){showToast(t('splitOutOfRange'),'error');return;}
+  try{
+    const out=await PDFDocument.create();
+    for(const index of parsed.pages)await addItemToPdf(out,pages[index]);
+    downloadBytes(await out.save(),'pdfcraft-extracted-pages.pdf');
+    closeModals();
+    showToast(t('splitDownloaded'));
+  }catch(e){
+    console.error('Split error',e);
+    showToast(t('exportError'),'error');
+  }
+}
+
 function openWatermark(){
   if(!pages.length){if(watermarkInput)watermarkInput.click();return;}
   openModal('watermarkModal');
@@ -430,7 +494,7 @@ function openModal(id){
   if(modal){modal.hidden=false;modal.classList.add('open');}
 }
 function closeModals(){
-  ['compressModal','signModal','watermarkModal'].forEach(id=>{
+  ['compressModal','signModal','watermarkModal','splitModal'].forEach(id=>{
     const n=el(id);
     if(n){n.classList.remove('open');n.hidden=true;}
   });
@@ -870,6 +934,9 @@ on('homeCompressBtn',openCompress);
 on('homeSignBtn',openSign);
 on('watermarkBtn',openWatermark);
 on('homeWatermarkBtn',openWatermark);
+on('splitBtn',openSplit);
+on('toolSplitCard',openSplit);
+on('homeSplitBtn',openSplit);
 on('exportBtn',exportPdf);
 on('exportToolbarBtn',exportPdf);
 on('exportPageBtn',exportSelectedPage);
@@ -896,6 +963,9 @@ on('addSignatureBtn',addSignature);
 on('closeWatermarkBtn',closeModals);
 on('cancelWatermarkBtn',closeModals);
 on('applyWatermarkBtn',applyWatermark);
+on('closeSplitBtn',closeModals);
+on('cancelSplitBtn',closeModals);
+on('runSplitBtn',runSplit);
 on('modalBackdrop',closeModals);
 on('langBtn',async()=>{
   currentLang=currentLang==='en'?'zh':'en';
@@ -911,6 +981,7 @@ if(mixedInput)mixedInput.onchange=async e=>{await openMixed(e.target.files,false
 if(compressInput)compressInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';if(pages.length)openModal('compressModal');};
 if(signInput)signInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';if(pages.length)openSign();};
 if(watermarkInput)watermarkInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';if(pages.length)openWatermark();};
+if(splitInput)splitInput.onchange=async e=>{await openPdfFiles(e.target.files,true);e.target.value='';if(pages.length)openSplit();};
 
 const drop=el('dropZone');
 if(drop){
@@ -922,6 +993,8 @@ if(drop){
   }));
   drop.addEventListener('drop',e=>openMixed(e.dataTransfer.files,pages.length===0));
 }
+
+const splitRange=el('splitRange');if(splitRange)splitRange.addEventListener('input',updateSplitSummary);
 
 document.addEventListener('click',e=>{
   if(!e.target.closest('.thumb-preview'))closeAllThumbMenus();
