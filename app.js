@@ -10,6 +10,79 @@ const mixedInput=el('mixedInput');
 const thumbs=el('thumbs');
 const canvas=el('pdfCanvas');
 
+const translations={
+  en:{
+    tagline:'Beautiful PDF tools, private by default',
+    openPdf:'Open PDF',mergePdfs:'Merge PDFs',imagesToPdf:'Images to PDF',downloadPdf:'Download PDF',
+    document:'DOCUMENT',pages:'Pages',tip:'Tip',tipText:'Drag page thumbnails to reorder them.',
+    rotateLeft:'Rotate left',rotateRight:'Rotate right',delete:'Delete',moveUp:'Move up',moveDown:'Move down',
+    sign:'Sign',compress:'Compress',soon:'Soon',
+    browserOnly:'100% browser-based · No upload required',
+    hero1:'Edit PDFs beautifully.',hero2:'Right in your browser.',
+    heroCopy:'Merge, reorder, rotate and export PDF files — or turn JPG and PNG images into one PDF — while keeping everything on your device.',
+    choosePdf:'Choose a PDF',jpgPngToPdf:'JPG / PNG to PDF',
+    noAccount:'✓ No account',noUploads:'✓ No uploads',freeStart:'✓ Free to start',
+    popularTools:'POPULAR TOOLS',everything:'Everything you need for everyday PDFs',fastPrivate:'Fast, simple, private',
+    editPdf:'Edit PDF',editPdfDesc:'Reorder, rotate & remove pages',
+    mergePdf:'Merge PDF',mergePdfDesc:'Combine multiple PDF files',
+    imagesToPdfDesc:'Combine JPG & PNG into one PDF',
+    splitPdf:'Split PDF',splitPdfDesc:'Extract selected pages',
+    compressPdf:'Compress PDF',compressPdfDesc:'Reduce document size',
+    signPdf:'Sign PDF',signPdfDesc:'Add a secure signature',
+    aiAssistant:'AI Assistant',aiAssistantDesc:'Ask questions about your PDF',
+    viewerHint:'Drag thumbnails to reorder pages',
+    privateProcessing:'Private processing · Your files stay on this device',
+    ready:'Ready',loadingFiles:'Loading files…',pagesReady:n=>n+' page(s) ready',
+    couldNotOpen:'Could not open file',openError:'One of these files could not be opened. Please try a standard PDF, JPG or PNG file.',
+    buildingPdf:'Building PDF…',downloadedPdf:'Downloaded PDF',exportFailed:'Export failed',
+    exportError:'PDF export failed. Please try again.',pageOf:(a,b)=>'Page '+a+' of '+b
+  },
+  zh:{
+    tagline:'漂亮、私密的 PDF 工具',
+    openPdf:'開啟 PDF',mergePdfs:'合併 PDF',imagesToPdf:'圖片轉 PDF',downloadPdf:'下載 PDF',
+    document:'文件',pages:'頁面',tip:'提示',tipText:'拖曳頁面縮圖即可重新排序。',
+    rotateLeft:'向左旋轉',rotateRight:'向右旋轉',delete:'刪除',moveUp:'上移',moveDown:'下移',
+    sign:'簽署',compress:'壓縮',soon:'即將推出',
+    browserOnly:'100% 瀏覽器本機處理 · 無需上傳',
+    hero1:'漂亮地編輯 PDF。',hero2:'直接在瀏覽器完成。',
+    heroCopy:'合併、排序、旋轉及匯出 PDF，也可以把 JPG 與 PNG 圖片合成一份 PDF；所有檔案都留在你的裝置上。',
+    choosePdf:'選擇 PDF',jpgPngToPdf:'JPG / PNG 轉 PDF',
+    noAccount:'✓ 無需帳戶',noUploads:'✓ 無需上傳',freeStart:'✓ 免費開始',
+    popularTools:'熱門工具',everything:'日常 PDF 所需工具，一站完成',fastPrivate:'快速、簡單、私密',
+    editPdf:'編輯 PDF',editPdfDesc:'排序、旋轉及刪除頁面',
+    mergePdf:'合併 PDF',mergePdfDesc:'合併多個 PDF 檔案',
+    imagesToPdfDesc:'把 JPG 與 PNG 合成一份 PDF',
+    splitPdf:'分割 PDF',splitPdfDesc:'擷取指定頁面',
+    compressPdf:'壓縮 PDF',compressPdfDesc:'減少文件大小',
+    signPdf:'簽署 PDF',signPdfDesc:'加入安全簽名',
+    aiAssistant:'AI 助手',aiAssistantDesc:'針對 PDF 內容提問',
+    viewerHint:'拖曳縮圖即可重新排序頁面',
+    privateProcessing:'本機私密處理 · 檔案只留在你的裝置',
+    ready:'準備就緒',loadingFiles:'正在載入檔案…',pagesReady:n=>'已載入 '+n+' 頁',
+    couldNotOpen:'無法開啟檔案',openError:'其中一個檔案無法開啟。請使用標準 PDF、JPG 或 PNG 檔案再試一次。',
+    buildingPdf:'正在建立 PDF…',downloadedPdf:'PDF 已下載',exportFailed:'匯出失敗',
+    exportError:'PDF 匯出失敗，請再試一次。',pageOf:(a,b)=>'第 '+a+' 頁，共 '+b+' 頁'
+  }
+};
+let currentLang=localStorage.getItem('pdfcraft-lang')||'en';
+const t=(key,...args)=>{
+  const value=translations[currentLang][key]??translations.en[key]??key;
+  return typeof value==='function'?value(...args):value;
+};
+function applyLanguage(){
+  document.documentElement.lang=currentLang==='zh'?'zh-Hant':'en';
+  document.querySelectorAll('[data-i18n]').forEach(node=>{
+    const key=node.dataset.i18n;
+    if(translations[currentLang][key]!==undefined) node.textContent=t(key);
+  });
+  const langBtn=el('langBtn');
+  if(langBtn) langBtn.textContent=currentLang==='en'?'中文':'EN';
+  if(!pages.length) setStatus(t('ready'));
+  else setStatus(t('pagesReady',pages.length));
+  if(pages.length) el('pageLabel').textContent=t('pageOf',selected+1,pages.length);
+}
+
+
 let sourceDocs=[];
 let imageSources=[];
 let pages=[];
@@ -78,7 +151,7 @@ async function openMixed(files,replace=false){
   const list=[...files].filter(f=>isPdf(f)||isImage(f));
   if(!list.length)return;
   try{
-    setStatus('Loading files…');
+    setStatus(t('loadingFiles'));
     if(replace)resetDoc();
     for(const file of list){
       if(isPdf(file)) await loadPdf(await file.arrayBuffer());
@@ -86,11 +159,11 @@ async function openMixed(files,replace=false){
     }
     if(selected>=pages.length)selected=Math.max(0,pages.length-1);
     await rebuild();
-    setStatus(pages.length+' page(s) ready');
+    setStatus(t('pagesReady',pages.length));
   }catch(e){
     console.error('File open error:',e);
-    setStatus('Could not open file');
-    alert('One of these files could not be opened. Please try a standard PDF, JPG or PNG file.');
+    setStatus(t('couldNotOpen'));
+    alert(t('openError'));
   }
 }
 
@@ -153,7 +226,7 @@ async function renderPage(){
   const item=pages[selected];
   if(item.type==='image') renderImageItem(item);
   else await renderPdfItem(item);
-  el('pageLabel').textContent='Page '+(selected+1)+' of '+pages.length;
+  el('pageLabel').textContent=t('pageOf',selected+1,pages.length);
 }
 
 async function makeThumbCanvas(item){
@@ -216,6 +289,7 @@ async function thumb(item,index){
 
 async function rebuild(rebuildThumbs=true){
   controls();
+applyLanguage();
   if(rebuildThumbs){
     thumbs.innerHTML='';
     for(let i=0;i<pages.length;i++) await thumb(pages[i],i);
@@ -227,7 +301,7 @@ async function rebuild(rebuildThumbs=true){
 
 async function exportPdf(){
   if(!pages.length)return;
-  setStatus('Building PDF…');
+  setStatus(t('buildingPdf'));
   try{
     const out=await PDFDocument.create();
 
@@ -263,11 +337,11 @@ async function exportPdf(){
     a.download='pdfcraft-document.pdf';
     a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-    setStatus('Downloaded PDF');
+    setStatus(t('downloadedPdf'));
   }catch(e){
     console.error('Export error:',e);
-    setStatus('Export failed');
-    alert('PDF export failed. Please try again.');
+    setStatus(t('exportFailed'));
+    alert(t('exportError'));
   }
 }
 
@@ -302,6 +376,7 @@ el('toolEditCard').onclick=()=>fileInput.click();
 el('toolMergeCard').onclick=()=>multiInput.click();
 el('toolImageCard').onclick=()=>imageInput.click();
 el('addBtn').onclick=()=>mixedInput.click();
+el('langBtn').onclick=()=>{currentLang=currentLang==='en'?'zh':'en';localStorage.setItem('pdfcraft-lang',currentLang);applyLanguage();};
 
 fileInput.onchange=e=>openPdfFiles(e.target.files,true);
 multiInput.onchange=e=>openPdfFiles(e.target.files,false);
