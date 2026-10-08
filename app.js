@@ -15,7 +15,7 @@ const translations={
     tagline:'Beautiful PDF tools, private by default',
     openPdf:'Open PDF',mergePdfs:'Merge PDFs',imagesToPdf:'Images to PDF',downloadPdf:'Download PDF',
     document:'DOCUMENT',pages:'Pages',tip:'Tip',tipText:'Drag page thumbnails to reorder them.',
-    rotateLeft:'Rotate left',rotateRight:'Rotate right',delete:'Delete',moveUp:'Move up',moveDown:'Move down',
+    home:'Home',previous:'Previous',next:'Next',rotateLeft:'Rotate left',rotateRight:'Rotate right',delete:'Delete',moveUp:'Move up',moveDown:'Move down',
     sign:'Sign',compress:'Compress',soon:'Soon',
     browserOnly:'100% browser-based · No upload required',
     hero1:'Edit PDFs beautifully.',hero2:'Right in your browser.',
@@ -41,7 +41,7 @@ const translations={
     tagline:'漂亮、私密的 PDF 工具',
     openPdf:'開啟 PDF',mergePdfs:'合併 PDF',imagesToPdf:'圖片轉 PDF',downloadPdf:'下載 PDF',
     document:'文件',pages:'頁面',tip:'提示',tipText:'拖曳頁面縮圖即可重新排序。',
-    rotateLeft:'向左旋轉',rotateRight:'向右旋轉',delete:'刪除',moveUp:'上移',moveDown:'下移',
+    home:'首頁',previous:'上一頁',next:'下一頁',rotateLeft:'向左旋轉',rotateRight:'向右旋轉',delete:'刪除',moveUp:'上移',moveDown:'下移',
     sign:'簽署',compress:'壓縮',soon:'即將推出',
     browserOnly:'100% 瀏覽器本機處理 · 無需上傳',
     hero1:'漂亮地編輯 PDF。',hero2:'直接在瀏覽器完成。',
@@ -95,6 +95,8 @@ const setStatus=m=>el('status').textContent=m;
 function controls(){
   const h=pages.length>0;
   ['exportBtn','rotateLeft','rotateRight','deletePage','moveUp','moveDown'].forEach(id=>el(id).disabled=!h);
+  el('prevBtn').disabled=!h||selected===0;
+  el('nextBtn').disabled=!h||selected===pages.length-1;
   el('moveUp').disabled=!h||selected===0;
   el('moveDown').disabled=!h||selected===pages.length-1;
   el('pageCount').textContent=pages.length;
@@ -366,6 +368,24 @@ function move(d){
   rebuild();
 }
 
+function goPage(d){
+  const to=selected+d;
+  if(to<0||to>=pages.length)return;
+  selected=to;
+  rebuild(false);
+}
+
+function goHome(){
+  resetDoc();
+  thumbs.innerHTML='';
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  canvas.width=0;
+  canvas.height=0;
+  controls();
+  applyLanguage();
+}
+
 el('openBtn').onclick=()=>fileInput.click();
 el('chooseBtn').onclick=()=>fileInput.click();
 el('mergeBtn').onclick=()=>multiInput.click();
@@ -376,6 +396,9 @@ el('toolEditCard').onclick=()=>fileInput.click();
 el('toolMergeCard').onclick=()=>multiInput.click();
 el('toolImageCard').onclick=()=>imageInput.click();
 el('addBtn').onclick=()=>mixedInput.click();
+el('homeBtn').onclick=goHome;
+el('prevBtn').onclick=()=>goPage(-1);
+el('nextBtn').onclick=()=>goPage(1);
 el('langBtn').onclick=()=>{currentLang=currentLang==='en'?'zh':'en';localStorage.setItem('pdfcraft-lang',currentLang);applyLanguage();};
 
 fileInput.onchange=e=>openPdfFiles(e.target.files,true);
